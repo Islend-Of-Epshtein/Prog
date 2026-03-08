@@ -7,4 +7,5 @@ public abstract class Operator
 {
     private IBufferWorker buffer;
     private IFileWorker file;
+    //Х У !
 }
