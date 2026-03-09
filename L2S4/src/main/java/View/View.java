@@ -19,7 +19,7 @@ public class View {
     private static String currentFile;
     private static String currentType;
     private static Scanner scanner = new Scanner(System.in);
-
+    //
     public static void main(String[] args) {
         System.out.println("=== Система управления виртуальной памятью ===");
         System.out.println("Введите 'Help' для списка команд");
