@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class OperatorInt extends Operator
 {
-    private final int pageLenght = 512, countelement = 1500;
+    private final int pageLenght = 512, countelement = (int)getFile().getHeader().getArraySize();
 
     public OperatorInt(String filename, long size, String arrayType){
         super(filename, size, arrayType);
@@ -22,7 +22,6 @@ public class OperatorInt extends Operator
                     j=0;
                     try{
                         getFile().writePage(n, bytes);
-                        System.out.println("!!! - " + n);
                         n++;
                         bytes = new byte[pageLenght];
                     }
@@ -41,14 +40,58 @@ public class OperatorInt extends Operator
         catch (Exception ex){
             throw new RuntimeException("Ошибка инциализации начального массива: "+ ex.getMessage());
         }
+        try{
+            for(i=0; i<5; i++)
+            {
+                if (getFile().getHeader().getTotalPages() > i) {
+                    getBuffer().loadPage(i);
+                }
 
-
-        System.out.println(getFile().getFileStats());
-    }
-    /*
-        {
-            если файл не существует, создаёт требуемые файлы в режиме rw (читать, писать), за-писывает сигнатуру и заполняет его нулями (0);
-            считывает заданное количество страниц (> =3), модифицируя атрибуты страниц (аб-солютный номер, статус, время записи);
+            }
         }
-         */
+        catch (IOException ex){
+            throw new RuntimeException("Ошибка заполнения буффера: " + ex.getMessage());
+        }
+    }
+
+    public int NumPageByIndex(int index){
+        return (int)(index/((float)pageLenght/4));
+    }
+
+    public int getValueByIndex(int index) {
+        int page = NumPageByIndex(index);
+        try{
+            byte[] data = getFile().readPage(page);
+            int a = index;
+            for(;a>pageLenght/4;a-=pageLenght/4);
+            byte[] convert = new byte[4];
+            for(int i =0; i<4; i++)
+            {
+                convert[i] = data[a+i];
+            }
+            return ByteBuffer.wrap(convert).getInt();
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка чтения файла: "+ e.getMessage());
+        }
+    }
+    public void setElement(){
+
+    }
+
+    public void input(int index, int value){
+        int a = NumPageByIndex(index);
+        if(getBuffer().isPageLoaded(a))
+        {
+           int b = getBuffer().findPageInBuffer(a);
+           byte[] pageData = getBuffer().getPageData(b);
+           for(;index>pageLenght/4;index-=pageLenght/4);
+           byte[] convert = ByteBuffer.allocate(4).putInt(value).array();
+           for(int i = 0; i<4; i++)
+           {
+               pageData[index+i] = convert[i];
+           }
+           getBuffer().
+        }
+    }
+
 }

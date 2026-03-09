@@ -10,12 +10,13 @@ import java.io.IOException;
 public abstract class Operator
 {
         private final byte pageCount = 5;
-        private IBufferWorker buffer;
-        private IFileWorker file = new FileWorker();
+        private final IBufferWorker buffer;
+        private final IFileWorker file = new FileWorker();
 
         public IFileWorker getFile() {return file;}
         public IBufferWorker getBuffer() {return buffer;}
 
+        // По заднию, для открытия или создания ( не нужен в тестировке )
         public Operator(String filename, long size, String arrayType){
 
                 try{
@@ -32,22 +33,28 @@ public abstract class Operator
 
                 }
                 buffer = new BufferWorker(file, pageCount);
-        } //
-
+        }
+        // Конструктор для создания
         public Operator(String filename, long size, String arrayType, int lengthStr) {
+
+                try{
+                        file.initialize(filename , size, arrayType, lengthStr);
+                }
+                catch (IOException ex2)
+                {
+                        throw new RuntimeException("Ошибка создания файла: "+ ex2.getMessage());
+                }
+                buffer = new BufferWorker(file, pageCount);
+        }
+        //Конструктор для открытия файла
+        public Operator(String filename) {
 
                 try{
                         file.open(filename);
                 }
-                catch (Exception ex1){
-                        try{
-                                file.initialize(filename , size, arrayType, lengthStr);
-                        }
-                        catch (IOException ex2)
-                        {
-                                throw new RuntimeException("Ошибка создания файла: "+ ex2.getMessage());
-                        }
-
+                catch (IOException ex2)
+                {
+                        throw new RuntimeException("Ошибка открытия файла: "+ ex2.getMessage());
                 }
                 buffer = new BufferWorker(file, pageCount);
         }
@@ -62,7 +69,6 @@ public abstract class Operator
         // метод чтения значения по индексу будет доступен в наследниках
 
         // метод записи в наслениках
-
         //
 
         /*
