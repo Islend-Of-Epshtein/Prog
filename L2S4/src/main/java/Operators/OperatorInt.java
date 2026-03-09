@@ -60,8 +60,10 @@ public class OperatorInt extends Operator
 
     public int getValueByIndex(int index) {
         int page = NumPageByIndex(index);
+
         try{
-            byte[] data = getFile().readPage(page);
+            int inBuffer = getBuffer().loadPage(page);
+            byte[] data = getBuffer().getPageData(inBuffer);
             int a = index;
             for(;a>pageLenght/4;a-=pageLenght/4);
             byte[] convert = new byte[4];
@@ -74,24 +76,30 @@ public class OperatorInt extends Operator
             throw new RuntimeException("Ошибка чтения файла: "+ e.getMessage());
         }
     }
-    public void setElement(){
 
-    }
-
-    public void input(int index, int value){
+    public void input(int index, int value)  {
         int a = NumPageByIndex(index);
         if(getBuffer().isPageLoaded(a))
         {
-           int b = getBuffer().findPageInBuffer(a);
-           byte[] pageData = getBuffer().getPageData(b);
-           for(;index>pageLenght/4;index-=pageLenght/4);
-           byte[] convert = ByteBuffer.allocate(4).putInt(value).array();
-           for(int i = 0; i<4; i++)
-           {
-               pageData[index+i] = convert[i];
-           }
-           getBuffer().
+           write(index, value, a);
         }
+        else{
+            try{
+                getBuffer().loadPage(a);
+                write(index, value, a);
+            }
+            catch (Exception ex){
+                throw new RuntimeException("Ошибка замены страницы в буфере: "+ ex.getMessage());
+            }
+        }
+    }
+    private void write(int index, int value, int page)
+    {
+        int b = getBuffer().findPageInBuffer(page);
+        for(;index>pageLenght/4;index-=pageLenght/4);
+        byte[] convert = ByteBuffer.allocate(4).putInt(value).array();
+        getBuffer().writeToPage(b,index,convert);
+        getBuffer().markPageDirty(page);
     }
 
 }

@@ -55,7 +55,93 @@ public class BufferWorker implements IBufferWorker {
     public BufferWorker(IFileWorker fileWorker) {
         this(fileWorker, 5);
     }
+    // Добавьте эти методы в класс BufferWorker
 
+    @Override
+    public void writeToPage(int bufferIndex, int position, byte[] data) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        // Копируем данные в страницу
+        System.arraycopy(data, 0, entry.data, position, data.length);
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
+    @Override
+    public void writeToPage(int bufferIndex, int position, byte value) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        // Записываем один байт
+        entry.data[position] = value;
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
+
+    @Override
+    public void writeToBitmap(int bufferIndex, int bytePosition, byte value) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        // Записываем байт в битовую карту
+        entry.bitmap[bytePosition] = value;
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
+
+    @Override
+    public void setBitInBitmap(int bufferIndex, int bitPosition, boolean value) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        int bytePos = bitPosition / 8;
+        int bitInByte = bitPosition % 8;
+
+        if (value) {
+            // Устанавливаем бит в 1
+            entry.bitmap[bytePos] |= (1 << bitInByte);
+        } else {
+            // Устанавливаем бит в 0
+            entry.bitmap[bytePos] &= ~(1 << bitInByte);
+        }
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
+
+    @Override
+    public void modifyPageData(int bufferIndex, int offset, byte[] data, int dataOffset, int length) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        // Копируем часть данных
+        System.arraycopy(data, dataOffset, entry.data, offset, length);
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
+
+    @Override
+    public void clearPage(int bufferIndex) {
+        validateBufferIndex(bufferIndex);
+        PageBufferEntry entry = buffers[bufferIndex];
+
+        // Очищаем данные страницы
+        Arrays.fill(entry.data, (byte)0);
+        Arrays.fill(entry.bitmap, (byte)0);
+
+        // Помечаем страницу как измененную
+        entry.dirty = true;
+        entry.lastAccessTime = System.nanoTime();
+    }
     @Override
     public int loadPage(int pageNumber) throws IOException {
         int existingIndex = findPageInBuffer(pageNumber);
@@ -185,6 +271,16 @@ public class BufferWorker implements IBufferWorker {
     public int getPageNumber(int bufferIndex) {
         validateBufferIndex(bufferIndex);
         return buffers[bufferIndex].pageNumber;
+    }
+    @Override
+    public int getFreeSlotIndex() {
+        if(getFreeSlotCount()==0) throw new RuntimeException("Свободного места нет");
+        int i = 0;
+        for(; i<getBufferSize();i++){
+            if(buffers[i].pageNumber==-1) {  break; }
+        }
+        nextVictimIndex = i;
+        return nextVictimIndex;
     }
 
     @Override

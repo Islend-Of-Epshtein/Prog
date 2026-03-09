@@ -12,6 +12,24 @@ public interface IBufferWorker {
     /** Возвращает данные страницы по индексу в буфере */
     byte[] getPageData(int bufferIndex);
 
+
+    /** Записывает массив данных в страницу по указанной позиции */
+    void writeToPage(int bufferIndex, int position, byte[] data);
+
+    /** Записывает один байт в страницу по указанной позиции */
+    void writeToPage(int bufferIndex, int position, byte value);
+
+    /** Записывает байт в битовую карту страницы */
+    void writeToBitmap(int bufferIndex, int bytePosition, byte value);
+
+    /** Устанавливает или сбрасывает конкретный бит в битовой карте */
+    void setBitInBitmap(int bufferIndex, int bitPosition, boolean value);
+
+    /** Изменяет часть данных страницы */
+    void modifyPageData(int bufferIndex, int offset, byte[] data, int dataOffset, int length);
+
+    /** Очищает страницу (заполняет нулями) */
+    void clearPage(int bufferIndex);
     /** Возвращает битовую карту страницы по индексу в буфере */
     byte[] getPageBitmap(int bufferIndex);
 
@@ -20,6 +38,8 @@ public interface IBufferWorker {
 
     /** Возвращает номер страницы в файле по индексу в буфере */
     int getPageNumber(int bufferIndex);
+
+    int getFreeSlotIndex();
 
     /** Записывает на диск все измененные страницы */
     void flushAll() throws IOException;
