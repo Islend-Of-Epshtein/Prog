@@ -13,7 +13,7 @@ public class OperatorInt extends Operator
         super(filename);
     }
 
-    public OperatorInt(String filename, long size, String arrayType){
+    public OperatorInt(String filename, long size, String arrayType) {
         super(filename, size, arrayType);
         int totalPages = getFile().getHeader().getTotalPages();
         byte[] emptyPage = new byte[pageLenght];
@@ -21,7 +21,6 @@ public class OperatorInt extends Operator
         try {
             for (int page = 0; page < totalPages; page++) {
                 getFile().writePage(page, emptyPage);
-
                 // Инициализируем битовую карту (все биты = 0 - ничего не записано)
                 byte[] bitmap = new byte[getFile().getBitmapSize()];
                 Arrays.fill(bitmap, (byte) 0);
@@ -74,10 +73,12 @@ public class OperatorInt extends Operator
     private void write(int index, int value, int page)
     {
         int b = getBuffer().findPageInBuffer(page);
-        for(;index>pageLenght/4;index-=pageLenght/4);
+        int elementsPerPage = pageLenght / 4; // 512/4 = 128 элементов на страницу
+        int posInPage = index % elementsPerPage;
+        int byteOffset = posInPage * 4; // Смещение в байтах
         byte[] convert = ByteBuffer.allocate(4).putInt(value).array();
-        getBuffer().writeToPage(b,index,convert);
-        getBuffer().markPageDirty(page);
+        getBuffer().writeToPage(b, byteOffset, convert);
+        getBuffer().markPageDirty(b); // Передаём индекс в буфере
     }
 
 }

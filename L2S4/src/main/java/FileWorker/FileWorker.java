@@ -27,7 +27,6 @@ public class FileWorker implements IFileWorker {
         int elementSize = getElementSize(dataType, stringLength);
         header.setElementsPerPage(header.getPageSize() / elementSize);
         header.setTotalPages((int)((size + header.getElementsPerPage() - 1) / header.getElementsPerPage()));
-        header.setFirstFreePage(0);
 
         file = new RandomAccessFile(filename, "rw");
         writeHeader();
@@ -39,8 +38,12 @@ public class FileWorker implements IFileWorker {
     public void open(String filename) throws IOException {
         this.filename = filename;
         file = new RandomAccessFile(filename, "rw");
-        readHeader();
         validateSignature();
+        readHeader();
+        byte type = getHeader().getDataType();
+        int elementSize = getElementSize(String.valueOf((char)type), getHeader().getStringLength());
+        header.setElementsPerPage(header.getPageSize() / elementSize);
+        header.setTotalPages((int)((getHeader().getArraySize() + header.getElementsPerPage() - 1) / header.getElementsPerPage()));
         isOpen = true;
     }
 
@@ -50,7 +53,6 @@ public class FileWorker implements IFileWorker {
         file.writeLong(header.getArraySize());
         file.writeByte(header.getDataType());
         file.writeInt(header.getStringLength());
-
     }
 
     private void readHeader() throws IOException {
@@ -78,9 +80,7 @@ public class FileWorker implements IFileWorker {
 
     @Override
     public long getPageOffset(int pageNumber) {
-        return FileHeader.HEADER_SIZE +
-                (long)pageNumber * (header.getPageSize() + getBitmapSize()) +
-                getBitmapSize();
+        return getBitmapOffset(pageNumber) + getBitmapSize();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class FileWorker implements IFileWorker {
         }
     }
 
-    private int getElementSize(String dataType, int stringLength) {
+    public int getElementSize(String dataType, int stringLength) {
         switch (dataType) {
             case "I": return 4;
             case "C": return stringLength;

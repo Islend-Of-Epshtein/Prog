@@ -1,7 +1,7 @@
 package FileWorker;
 
 public class FileHeader {
-    public static final int HEADER_SIZE = 17;
+    public static final int HEADER_SIZE = 15;
     public static final byte[] SIGNATURE = {'V', 'M'};
 
     private byte[] signature = new byte[2];
@@ -11,7 +11,6 @@ public class FileHeader {
     private int pageSize = 512;
     private int elementsPerPage;
     private int totalPages;
-    private long firstFreePage;
 
     public byte[] getSignature() { return signature; }
     public void setSignature(byte[] sig) { System.arraycopy(sig, 0, signature, 0, 2); }
@@ -34,6 +33,4 @@ public class FileHeader {
     public int getTotalPages() { return totalPages; }
     public void setTotalPages(int pages) { this.totalPages = pages; }
 
-    public long getFirstFreePage() { return firstFreePage; }
-    public void setFirstFreePage(long page) { this.firstFreePage = page; }
 }

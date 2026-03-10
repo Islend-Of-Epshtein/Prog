@@ -29,7 +29,6 @@ public class BufferWorker implements IBufferWorker {
             lastAccessTime = System.nanoTime();
             loadTime = System.nanoTime();
         }
-
         void reset() {
             pageNumber = -1;
             dirty = false;
@@ -37,7 +36,6 @@ public class BufferWorker implements IBufferWorker {
             Arrays.fill(bitmap, (byte)0);
         }
     }
-
     /** Конструктор с размером буфера (минимум 3, рекомендуется 5) */
     public BufferWorker(IFileWorker fileWorker, int bufferSize) {
         this.fileWorker = fileWorker;
@@ -55,19 +53,20 @@ public class BufferWorker implements IBufferWorker {
     public BufferWorker(IFileWorker fileWorker) {
         this(fileWorker, 5);
     }
-    // Добавьте эти методы в класс BufferWorker
 
     @Override
     public void writeToPage(int bufferIndex, int position, byte[] data) {
         validateBufferIndex(bufferIndex);
         PageBufferEntry entry = buffers[bufferIndex];
-
         // Копируем данные в страницу
         System.arraycopy(data, 0, entry.data, position, data.length);
-
         // Помечаем страницу как измененную
         entry.dirty = true;
         entry.lastAccessTime = System.nanoTime();
+        byte a =  fileWorker.getHeader().getDataType();
+        setBitInBitmap(bufferIndex,position/fileWorker.getElementSize(
+               String.valueOf((char)a)
+                ,fileWorker.getHeader().getStringLength() ), true);
     }
     @Override
     public void writeToPage(int bufferIndex, int position, byte value) {
@@ -80,6 +79,7 @@ public class BufferWorker implements IBufferWorker {
         // Помечаем страницу как измененную
         entry.dirty = true;
         entry.lastAccessTime = System.nanoTime();
+        setBitInBitmap(bufferIndex,position, true);
     }
 
     @Override
@@ -115,7 +115,6 @@ public class BufferWorker implements IBufferWorker {
         entry.dirty = true;
         entry.lastAccessTime = System.nanoTime();
     }
-
     @Override
     public void modifyPageData(int bufferIndex, int offset, byte[] data, int dataOffset, int length) {
         validateBufferIndex(bufferIndex);
@@ -128,7 +127,6 @@ public class BufferWorker implements IBufferWorker {
         entry.dirty = true;
         entry.lastAccessTime = System.nanoTime();
     }
-
     @Override
     public void clearPage(int bufferIndex) {
         validateBufferIndex(bufferIndex);

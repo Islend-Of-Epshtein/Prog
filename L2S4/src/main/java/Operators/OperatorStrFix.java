@@ -14,6 +14,13 @@ public class OperatorStrFix extends Operator {
     private final int elementsPerPage;
     private final long arraySize;
 
+    public OperatorStrFix(String filename){
+        super(filename);
+        this.stringLength = getFile().getHeader().getStringLength();
+        this.arraySize = getFile().getHeader().getArraySize();
+        this.elementsPerPage = pageSize/stringLength;
+    }
+
     public OperatorStrFix(String filename, long size, String arrayType, int stringLength) {
         super(filename, size, arrayType, stringLength);
         this.stringLength = stringLength;

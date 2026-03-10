@@ -1,271 +1,188 @@
 package Operators;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-/**
- * Класс для работы с массивом строк переменной длины (тип 'V')
- * Используется два файла: основной файл страниц и файл для хранения строк
- */
 public class OperatorStr extends Operator {
-    private final int pageSize = 512;
-    private final int elementsPerPage = 128; // На странице 128 элементов (адресов)
-    private final int maxStringLength;
-    private final long arraySize;
-    private final String stringFileName;
+    private final int maxLength;
+    private final int elementsPerPage;
+    private RandomAccessFile stringFile;
+    private boolean stringFileOpen = false;
 
-    // Файл для хранения строк
-    private FileWorker.IFileWorker stringFile;
+    // Конструктор для создания нового файла
+    public OperatorStr(String filename, long size, String arrayType, int maxLength) {
+        super(filename, size, arrayType, maxLength); // maxLength передаётся в родительский конструктор
+        this.maxLength = maxLength;
+        this.elementsPerPage = 512 / 4; // 128 указателей на страницу (int по 4 байта)
 
-    public OperatorStr(String filename, long size, String arrayType, int maxStringLength) {
-        super(filename, size, arrayType);
-        this.maxStringLength = maxStringLength;
-        this.arraySize = size;
-        this.stringFileName = filename + ".str";
-
-        // Создаем или открываем файл для хранения строк
-        initStringFile();
-
-        // Инициализируем основной массив (все адреса = -1)
-        initializeArray();
-
-        // Загружаем первые 5 страниц в буфер
         try {
-            int totalPages = getFile().getHeader().getTotalPages();
-            for (int i = 0; i < Math.min(5, totalPages); i++) {
-                getBuffer().loadPage(i);
+            // Создаём отдельный файл для строк
+            String stringFilename = filename + ".str";
+            stringFile = new RandomAccessFile(stringFilename, "rw");
+
+            // Рассчитываем общий размер файла строк
+            long totalStringSize = size * maxLength;
+
+            // Выделяем место под все строки (заполняем нулями)
+            byte[] emptyBlock = new byte[8192]; // Пишем блоками для скорости
+            long written = 0;
+            while (written < totalStringSize) {
+                int toWrite = (int) Math.min(emptyBlock.length, totalStringSize - written);
+                stringFile.write(emptyBlock, 0, toWrite);
+                written += toWrite;
             }
+
+            stringFileOpen = true;
+            System.out.println("Создан файл строк: " + stringFilename +
+                    " размером " + totalStringSize + " байт");
+
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка заполнения буфера: " + e.getMessage());
+            throw new RuntimeException("Ошибка создания файла строк: " + e.getMessage());
         }
     }
 
-    private void initStringFile() {
-        stringFile = new FileWorker.FileWorker();
-        try {
-            // Пытаемся открыть существующий файл
-            stringFile.open(stringFileName);
-        } catch (IOException e) {
-            // Если файла нет, создаем новый
-            try {
-                // Для файла строк используем упрощенную структуру:
-                // Заголовок 256 байт, далее записи переменной длины
-                // Каждой записи предшествуют 4 байта длины
-                stringFile.initialize(stringFileName, 0, "C", 0);
-            } catch (IOException ex) {
-                throw new RuntimeException("Ошибка создания файла строк: " + ex.getMessage());
-            }
-        }
-    }
+    // Конструктор для открытия существующего файла
+    public OperatorStr(String filename) {
+        super(filename);
 
-    private void initializeArray() {
-        int totalPages = getFile().getHeader().getTotalPages();
-        byte[] emptyPage = new byte[pageSize];
-        Arrays.fill(emptyPage, (byte) 0xFF); // Заполняем -1 (все адреса пусты)
+        // Получаем maxLength из заголовка основного файла
+        this.maxLength = getFile().getHeader().getStringLength();
+        this.elementsPerPage = 512 / 4;
 
         try {
-            for (int page = 0; page < totalPages; page++) {
-                getFile().writePage(page, emptyPage);
+            // Открываем существующий файл строк
+            String stringFilename = filename + ".str";
+            stringFile = new RandomAccessFile(stringFilename, "rw");
+            stringFileOpen = true;
+            System.out.println("Открыт файл строк: " + stringFilename);
 
-                // Инициализируем битовую карту
-                byte[] bitmap = new byte[getFile().getBitmapSize()];
-                Arrays.fill(bitmap, (byte) 0);
-                getFile().writeBitmap(page, bitmap);
-            }
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка инициализации массива: " + e.getMessage());
+            throw new RuntimeException("Ошибка открытия файла строк: " + e.getMessage());
         }
     }
 
     /**
-     * Определяет номер страницы по индексу элемента
+     * Запись строки в файл
      */
-    public int getPageByIndex(long index) {
-        return (int) (index / elementsPerPage);
+    public void input(long index, String value) {
+        if (!stringFileOpen) {
+            throw new RuntimeException("Файл строк не открыт");
+        }
+
+        try {
+            // 1. Обрезаем строку, если она длиннее maxLength
+            if (value.length() > maxLength) {
+                value = value.substring(0, maxLength);
+            }
+
+            // 2. Вычисляем позицию в файле строк
+            long position = index * maxLength;
+
+            // 3. Конвертируем строку в байты (фиксированная длина)
+            byte[] stringBytes = new byte[maxLength];
+            byte[] valueBytes = value.getBytes("UTF-8");
+
+            // Копируем байты строки
+            int copyLength = Math.min(valueBytes.length, maxLength);
+            System.arraycopy(valueBytes, 0, stringBytes, 0, copyLength);
+
+            // Остальные байты остаются нулями
+
+            // 4. Записываем в файл строк
+            stringFile.seek(position);
+            stringFile.write(stringBytes);
+
+            // 5. Записываем указатель в основной файл
+            int pageIndex = (int)(index / elementsPerPage);
+            int posInPage = (int)(index % elementsPerPage);
+
+            int bufferIndex = getBuffer().loadPage(pageIndex);
+
+            // Указатель - это смещение в файле строк
+            byte[] pointer = ByteBuffer.allocate(4).putInt((int)position).array();
+
+            // Записываем указатель (int) в нужное место страницы
+            getBuffer().writeToPage(bufferIndex, posInPage * 4, pointer);
+
+            // Помечаем страницу как изменённую
+            getBuffer().markPageDirty(bufferIndex);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка записи строки: " + e.getMessage());
+        }
     }
 
     /**
-     * Определяет смещение элемента на странице (в байтах)
-     */
-    public int getOffsetInPage(long index) {
-        return (int) ((index % elementsPerPage) * 4); // 4 байта на адрес
-    }
-
-    /**
-     * Чтение значения строки по индексу
+     * Чтение строки из файла
      */
     public String getValueByIndex(long index) {
-        if (index < 0 || index >= arraySize) {
-            throw new IndexOutOfBoundsException("Индекс вне границ массива: " + index);
+        if (!stringFileOpen) {
+            throw new RuntimeException("Файл строк не открыт");
         }
 
-        int pageNum = getPageByIndex(index);
-        int offset = getOffsetInPage(index);
-
         try {
-            // Загружаем страницу в буфер
-            int bufferIndex = getBuffer().loadPage(pageNum);
+            // 1. Читаем указатель из основного файла
+            int pageIndex = (int)(index / elementsPerPage);
+            int posInPage = (int)(index % elementsPerPage);
 
-            // Проверяем битовую карту
-            byte[] bitmap = getBuffer().getPageBitmap(bufferIndex);
-            int bitPosition = (int) (index % elementsPerPage);
-            int bytePos = bitPosition / 8;
-            int bitInByte = bitPosition % 8;
-
-            boolean isWritten = ((bitmap[bytePos] >> bitInByte) & 1) == 1;
-
-            if (!isWritten) {
-                return ""; // Пустая строка
-            }
-
-            // Читаем адрес строки из страницы
+            int bufferIndex = getBuffer().loadPage(pageIndex);
             byte[] pageData = getBuffer().getPageData(bufferIndex);
-            byte[] addressBytes = new byte[4];
-            System.arraycopy(pageData, offset, addressBytes, 0, 4);
-            long stringAddress = ByteBuffer.wrap(addressBytes).getInt() & 0xFFFFFFFFL;
 
-            if (stringAddress == 0xFFFFFFFFL) {
+            // Извлекаем указатель (4 байта)
+            byte[] pointerBytes = new byte[4];
+            System.arraycopy(pageData, posInPage * 4, pointerBytes, 0, 4);
+            int position = ByteBuffer.wrap(pointerBytes).getInt();
+
+            // 2. Если указатель = 0, значит строка не записана
+            if (position == 0) {
                 return "";
             }
 
-            // Читаем строку из файла строк
-            return readStringFromFile(stringAddress);
+            // 3. Читаем строку из файла строк
+            stringFile.seek(position);
+            byte[] stringBytes = new byte[maxLength];
+            stringFile.read(stringBytes);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка чтения: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Запись значения строки по индексу
-     */
-    public void input(long index, String value) {
-        if (index < 0 || index >= arraySize) {
-            throw new IndexOutOfBoundsException("Индекс вне границ массива: " + index);
-        }
-
-        if (value.length() > maxStringLength) {
-            throw new IllegalArgumentException("Строка слишком длинная. Максимальная длина: " + maxStringLength);
-        }
-
-        int pageNum = getPageByIndex(index);
-        int offset = getOffsetInPage(index);
-
-        try {
-            // Загружаем страницу в буфер
-            int bufferIndex = getBuffer().loadPage(pageNum);
-
-            // Сохраняем строку в файл строк и получаем адрес
-            long stringAddress;
-
-            if (value.isEmpty()) {
-                stringAddress = 0xFFFFFFFFL;
-            } else {
-                stringAddress = writeStringToFile(value);
+            // 4. Находим конец строки (первый нулевой байт)
+            int realLength = 0;
+            while (realLength < maxLength && stringBytes[realLength] != 0) {
+                realLength++;
             }
 
-            // Записываем адрес в страницу
-            byte[] addressBytes = ByteBuffer.allocate(4).putInt((int) stringAddress).array();
-            getBuffer().modifyPageData(bufferIndex, offset, addressBytes, 0, 4);
-
-            // Устанавливаем бит в битовой карте
-            int bitPosition = (int) (index % elementsPerPage);
-            getBuffer().setBitInBitmap(bufferIndex, bitPosition, true);
-
-            getBuffer().markPageDirty(bufferIndex);
+            // 5. Конвертируем в строку
+            if (realLength == 0) {
+                return "";
+            }
+            return new String(stringBytes, 0, realLength, "UTF-8");
 
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка записи: " + e.getMessage());
+            throw new RuntimeException("Ошибка чтения строки: " + e.getMessage());
         }
     }
 
     /**
-     * Запись строки в файл строк
-     * Возвращает адрес (смещение) записи
+     * Закрытие файла строк
      */
-    private long writeStringToFile(String value) throws IOException {
-        byte[] strBytes = value.getBytes(StandardCharsets.UTF_8);
-
-        // Длина строки (4 байта) + сами данные
-        ByteBuffer buffer = ByteBuffer.allocate(4 + strBytes.length);
-        buffer.putInt(strBytes.length);
-        buffer.put(strBytes);
-
-        // Определяем место для записи (в конец файла)
-        long fileSize = stringFile.getHeader() != null ?
-                stringFile.getHeader().getArraySize() : 0;
-        long position = FileWorker.FileHeader.HEADER_SIZE + fileSize;
-
-        // Записываем
-        java.io.RandomAccessFile raf = new java.io.RandomAccessFile(stringFileName, "rw");
-        raf.seek(position);
-        raf.write(buffer.array());
-        raf.close();
-
-        return position - FileWorker.FileHeader.HEADER_SIZE;
-    }
-
-    /**
-     * Чтение строки из файла строк по адресу
-     */
-    private String readStringFromFile(long address) throws IOException {
-        java.io.RandomAccessFile raf = new java.io.RandomAccessFile(stringFileName, "r");
-        raf.seek(FileWorker.FileHeader.HEADER_SIZE + address);
-
-        // Читаем длину строки
-        byte[] lenBytes = new byte[4];
-        raf.read(lenBytes);
-        int length = ByteBuffer.wrap(lenBytes).getInt();
-
-        if (length <= 0 || length > maxStringLength) {
-            raf.close();
-            return "";
-        }
-
-        // Читаем строку
-        byte[] strBytes = new byte[length];
-        raf.read(strBytes);
-        raf.close();
-
-        return new String(strBytes, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Удаление значения
-     */
-    public void delete(long index) {
-        if (index < 0 || index >= arraySize) {
-            throw new IndexOutOfBoundsException("Индекс вне границ массива: " + index);
-        }
-
-        int pageNum = getPageByIndex(index);
-
+    public void close() {
         try {
-            int bufferIndex = getBuffer().loadPage(pageNum);
-
-            // Сбрасываем бит
-            int bitPosition = (int) (index % elementsPerPage);
-            getBuffer().setBitInBitmap(bufferIndex, bitPosition, false);
-
-            // Очищаем адрес
-            int offset = getOffsetInPage(index);
-            byte[] emptyAddress = ByteBuffer.allocate(4).putInt(-1).array();
-            getBuffer().modifyPageData(bufferIndex, offset, emptyAddress, 0, 4);
-
-            getBuffer().markPageDirty(bufferIndex);
-
+            if (stringFile != null) {
+                stringFile.close();
+                stringFileOpen = false;
+                System.out.println("Файл строк закрыт");
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка удаления: " + e.getMessage());
+            System.err.println("Ошибка при закрытии файла строк: " + e.getMessage());
         }
     }
 
-    public void close() throws IOException {
-        getBuffer().flushAll();
-        getFile().close();
+    /**
+     * Получить размер файла строк
+     */
+    public long getStringFileSize() throws IOException {
         if (stringFile != null) {
-            stringFile.close();
+            return stringFile.length();
         }
+        return 0;
     }
 }

@@ -9,6 +9,7 @@ public interface IFileWorker {
     /** Открывает существующий файл */
     void open(String filename) throws IOException;
 
+    int getElementSize(String dataType, int stringLength);
     /** Читает страницу данных из файла */
     byte[] readPage(int pageNumber) throws IOException;
 

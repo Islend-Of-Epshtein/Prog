@@ -78,7 +78,7 @@ public class View {
                 "=== Список команд ===\n" +
                         "Create имя_файла(int|char(длина)|varchar(макс.длина)) - создает файл виртуального массива\n" +
                         "Open имя_файла - открывает существующий файл\n" +
-                        "Input(индекс, значение) - записывает значение в элемент массива\n" +
+                        "Input (индекс, значение) - записывает значение в элемент массива\n" +
                         "Print(индекс) - выводит значение элемента массива\n" +
                         "Status - выводит состояние буфера\n" +
                         "Stats - выводит статистику работы\n" +
@@ -170,7 +170,6 @@ public class View {
      */
     private static void open(String filename) {
         System.out.println("Открытие файла: " + filename);
-
         try {
             // Сначала создаем временный FileWorker для чтения заголовка
             FileWorker tempFileWorker = new FileWorker();
@@ -204,7 +203,7 @@ public class View {
 
                     // Для строк фиксированной длины нужен конструктор с длиной
                     // Используем рефлексию или специальный метод
-                    strFixOperator = new OperatorStrFix(filename, arraySize, "C", stringLength);
+                    strFixOperator = new OperatorStrFix(filename);
                     break;
 
                 case 'V':
@@ -213,7 +212,7 @@ public class View {
                     System.out.println("Размер массива: " + arraySize);
                     System.out.println("Максимальная длина строки: " + stringLength);
 
-                    strOperator = new OperatorStr(filename, arraySize, "V", stringLength);
+                    strOperator = new OperatorStr(filename);
                     break;
 
                 default:
