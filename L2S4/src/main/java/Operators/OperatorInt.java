@@ -2,6 +2,7 @@ package Operators;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Random;
 
 public class OperatorInt extends Operator
@@ -14,46 +15,20 @@ public class OperatorInt extends Operator
 
     public OperatorInt(String filename, long size, String arrayType){
         super(filename, size, arrayType);
-        int i = 0, j =0, n= 0;
-        Random random = new Random();
-        byte[] bytes = new byte[pageLenght];
-        for(; i<countelement; i++){
-            int a =  random.nextInt();
-            byte[] convert = ByteBuffer.allocate(4).putInt(a).array();
-            for(byte data: convert){
-                if(j>=pageLenght){
-                    j=0;
-                    try{
-                        getFile().writePage(n, bytes);
-                        n++;
-                        bytes = new byte[pageLenght];
-                    }
-                    catch (Exception ex){
-                        throw new RuntimeException("Ошибка инциализации начального массива: "+ ex.getMessage());
-                    }
-                }
-                bytes[j] = data;
-                j++;
-            }
+        int totalPages = getFile().getHeader().getTotalPages();
+        byte[] emptyPage = new byte[pageLenght];
+        Arrays.fill(emptyPage, (byte) 0);
+        try {
+            for (int page = 0; page < totalPages; page++) {
+                getFile().writePage(page, emptyPage);
 
-        }
-        try{
-            getFile().writePage(n, bytes);
-        }
-        catch (Exception ex){
-            throw new RuntimeException("Ошибка инциализации начального массива: "+ ex.getMessage());
-        }
-        try{
-            for(i=0; i<5; i++)
-            {
-                if (getFile().getHeader().getTotalPages() > i) {
-                    getBuffer().loadPage(i);
-                }
-
+                // Инициализируем битовую карту (все биты = 0 - ничего не записано)
+                byte[] bitmap = new byte[getFile().getBitmapSize()];
+                Arrays.fill(bitmap, (byte) 0);
+                getFile().writeBitmap(page, bitmap);
             }
-        }
-        catch (IOException ex){
-            throw new RuntimeException("Ошибка заполнения буффера: " + ex.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка инициализации массива: " + e.getMessage());
         }
     }
 

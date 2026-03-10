@@ -50,13 +50,7 @@ public class FileWorker implements IFileWorker {
         file.writeLong(header.getArraySize());
         file.writeByte(header.getDataType());
         file.writeInt(header.getStringLength());
-        file.writeInt(header.getPageSize());
-        file.writeInt(header.getElementsPerPage());
-        file.writeInt(header.getTotalPages());
-        file.writeLong(header.getFirstFreePage());
 
-        byte[] reserved = new byte[FileHeader.HEADER_SIZE - 32];
-        file.write(reserved);
     }
 
     private void readHeader() throws IOException {
@@ -68,10 +62,6 @@ public class FileWorker implements IFileWorker {
         header.setArraySize(file.readLong());
         header.setDataType(file.readByte());
         header.setStringLength(file.readInt());
-        header.setPageSize(file.readInt());
-        header.setElementsPerPage(file.readInt());
-        header.setTotalPages(file.readInt());
-        header.setFirstFreePage(file.readLong());
     }
 
     private void allocateFileSpace() throws IOException {

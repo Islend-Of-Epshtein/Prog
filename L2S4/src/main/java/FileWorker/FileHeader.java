@@ -1,7 +1,7 @@
 package FileWorker;
 
 public class FileHeader {
-    public static final int HEADER_SIZE = 256;
+    public static final int HEADER_SIZE = 17;
     public static final byte[] SIGNATURE = {'V', 'M'};
 
     private byte[] signature = new byte[2];
