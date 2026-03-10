@@ -6,6 +6,7 @@ import FileWorker.FileWorker;
 import FileWorker.IFileWorker;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public abstract class Operator
 {
@@ -50,6 +51,7 @@ public abstract class Operator
         public Operator(String filename) {
 
                 try{
+                    if (Objects.equals(filename, "") || filename == null) {throw new RuntimeException("Имя файла пустое!");}
                         file.open(filename);
                 }
                 catch (IOException ex2)

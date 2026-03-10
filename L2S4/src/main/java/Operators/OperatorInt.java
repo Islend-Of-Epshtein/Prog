@@ -8,12 +8,15 @@ public class OperatorInt extends Operator
 {
     private final int pageLenght = 512, countelement = (int)getFile().getHeader().getArraySize();
 
+    public OperatorInt(String filename){
+        super(filename);
+    }
+
     public OperatorInt(String filename, long size, String arrayType){
         super(filename, size, arrayType);
         int i = 0, j =0, n= 0;
         Random random = new Random();
         byte[] bytes = new byte[pageLenght];
-
         for(; i<countelement; i++){
             int a =  random.nextInt();
             byte[] convert = ByteBuffer.allocate(4).putInt(a).array();

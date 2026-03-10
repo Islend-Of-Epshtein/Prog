@@ -3,6 +3,8 @@ package View;
 import Operators.OperatorInt;
 import Operators.OperatorStr;
 import Operators.OperatorStrFix;
+import FileWorker.FileWorker;
+import FileWorker.FileHeader;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -18,8 +20,8 @@ public class View {
     private static OperatorStr strOperator;
     private static String currentFile;
     private static String currentType;
-    private static Scanner scanner = new Scanner(System.in);
-    //
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         System.out.println("=== Система управления виртуальной памятью ===");
         System.out.println("Введите 'Help' для списка команд");
@@ -102,7 +104,7 @@ public class View {
     private static void create(String params) {
         // Формат: имя_файла(int|char(длина)|varchar(макс.длина))
         int openBracket = params.indexOf('(');
-        int closeBracket = params.indexOf(')');
+        int closeBracket = params.lastIndexOf(')');
 
         if (openBracket == -1 || closeBracket == -1) {
             System.out.println("Неверный формат команды. Используйте: Create имя(int|char(длина)|varchar(макс.длина))");
@@ -124,7 +126,7 @@ public class View {
             currentType = "C";
             // Извлекаем длину строки
             int lenStart = typeInfo.indexOf('(');
-            int lenEnd = typeInfo.lastIndexOf(')');
+            int lenEnd = typeInfo.indexOf(')');
             if (lenStart != -1 && lenEnd != -1) {
                 int strLength = Integer.parseInt(typeInfo.substring(lenStart + 1, lenEnd).trim());
                 System.out.println("Создание массива строк фиксированной длины (" + strLength + ")...");
@@ -154,21 +156,127 @@ public class View {
 
         currentFile = filename;
         System.out.println("Файл успешно создан: " + filename);
+
+        // Считываем первые 5 страниц в буфер (как требуется в задании)
+        loadInitialPages();
     }
 
+    /**
+     * Реализация команды Open для открытия существующего файла
+     * Согласно заданию:
+     * "Open имя файла — открывает указанный файл и связанные с ним файлы в режиме rw,
+     * создает все необходимые структуры в памяти и считывает заданное количество страниц
+     * (>=3), модифицируя атрибуты страниц (абсолютный номер, статус, время записи)"
+     */
     private static void open(String filename) {
-        // В реальной реализации нужно определить тип из заголовка файла
-        // Для демо просто сообщаем, что файл открыт
         System.out.println("Открытие файла: " + filename);
 
-        // Здесь должна быть логика определения типа файла
-        // Пока просто сообщаем, что нужно создать новый массив
-        System.out.println("Для работы с файлом используйте команду Create");
+        try {
+            // Сначала создаем временный FileWorker для чтения заголовка
+            FileWorker tempFileWorker = new FileWorker();
+            tempFileWorker.open(filename);
+
+            // Получаем заголовок и определяем тип данных
+            FileHeader header = tempFileWorker.getHeader();
+            byte dataType = header.getDataType();
+            long arraySize = header.getArraySize();
+            int stringLength = header.getStringLength();
+
+            // Закрываем временный файл
+            tempFileWorker.close();
+
+            // Определяем тип данных и создаем соответствующий оператор
+            switch ((char) dataType) {
+                case 'I':
+                    currentType = "I";
+                    System.out.println("Тип данных: целые числа");
+                    System.out.println("Размер массива: " + arraySize);
+
+                    // Используем конструктор для открытия существующего файла
+                    intOperator = new OperatorInt(filename);
+                    break;
+
+                case 'C':
+                    currentType = "C";
+                    System.out.println("Тип данных: строки фиксированной длины");
+                    System.out.println("Размер массива: " + arraySize);
+                    System.out.println("Длина строки: " + stringLength);
+
+                    // Для строк фиксированной длины нужен конструктор с длиной
+                    // Используем рефлексию или специальный метод
+                    strFixOperator = new OperatorStrFix(filename, arraySize, "C", stringLength);
+                    break;
+
+                case 'V':
+                    currentType = "V";
+                    System.out.println("Тип данных: строки переменной длины");
+                    System.out.println("Размер массива: " + arraySize);
+                    System.out.println("Максимальная длина строки: " + stringLength);
+
+                    strOperator = new OperatorStr(filename, arraySize, "V", stringLength);
+                    break;
+
+                default:
+                    System.out.println("Неизвестный тип данных в файле: " + (char) dataType);
+                    return;
+            }
+
+            currentFile = filename;
+            System.out.println("Файл успешно открыт: " + filename);
+
+            // Считываем заданное количество страниц (>=3) в буфер
+            loadInitialPages();
+
+        } catch (IOException e) {
+            System.out.println("Ошибка при открытии файла: " + e.getMessage());
+            System.out.println("Убедитесь, что файл существует и имеет правильный формат");
+        } catch (Exception e) {
+            System.out.println("Неожиданная ошибка: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Загружает начальные страницы в буфер (первые 5 страниц или меньше, если файл маленький)
+     */
+    private static void loadInitialPages() {
+        try {
+            int pagesToLoad = 5; // Загружаем 5 страниц (>=3 как требуется в задании)
+
+            if (intOperator != null) {
+                int totalPages = intOperator.getFile().getHeader().getTotalPages();
+                int loadCount = Math.min(pagesToLoad, totalPages);
+
+                for (int i = 0; i < loadCount; i++) {
+                    intOperator.getBuffer().loadPage(i);
+                }
+                System.out.println("Загружено " + loadCount + " страниц в буфер");
+
+            } else if (strFixOperator != null) {
+                int totalPages = strFixOperator.getFile().getHeader().getTotalPages();
+                int loadCount = Math.min(pagesToLoad, totalPages);
+
+                for (int i = 0; i < loadCount; i++) {
+                    strFixOperator.getBuffer().loadPage(i);
+                }
+                System.out.println("Загружено " + loadCount + " страниц в буфер");
+
+            } else if (strOperator != null) {
+                int totalPages = strOperator.getFile().getHeader().getTotalPages();
+                int loadCount = Math.min(pagesToLoad, totalPages);
+
+                for (int i = 0; i < loadCount; i++) {
+                    strOperator.getBuffer().loadPage(i);
+                }
+                System.out.println("Загружено " + loadCount + " страниц в буфер");
+            }
+        } catch (IOException e) {
+            System.out.println("Предупреждение: не удалось загрузить начальные страницы: " + e.getMessage());
+        }
     }
 
     private static void input(String params) {
         if (intOperator == null && strFixOperator == null && strOperator == null) {
-            System.out.println("Сначала создайте или откройте файл командой Create");
+            System.out.println("Сначала создайте или откройте файл командой Create/Open");
             return;
         }
 
@@ -215,7 +323,7 @@ public class View {
 
     private static void print(String params) {
         if (intOperator == null && strFixOperator == null && strOperator == null) {
-            System.out.println("Сначала создайте или откройте файл командой Create");
+            System.out.println("Сначала создайте или откройте файл командой Create/Open");
             return;
         }
 
@@ -231,6 +339,13 @@ public class View {
         try {
             long index = Long.parseLong(content);
 
+            // Проверяем границы массива
+            long arraySize = getCurrentArraySize();
+            if (index < 0 || index >= arraySize) {
+                System.out.println("Индекс вне границ массива. Допустимые значения: 0 - " + (arraySize - 1));
+                return;
+            }
+
             if (currentType.equals("I")) {
                 int value = intOperator.getValueByIndex((int) index);
                 System.out.println("[" + index + "] = " + value);
@@ -245,6 +360,20 @@ public class View {
         } catch (NumberFormatException e) {
             System.out.println("Неверный формат индекса: " + e.getMessage());
         }
+    }
+
+    /**
+     * Получает размер текущего массива
+     */
+    private static long getCurrentArraySize() {
+        if (intOperator != null) {
+            return intOperator.getFile().getHeader().getArraySize();
+        } else if (strFixOperator != null) {
+            return strFixOperator.getFile().getHeader().getArraySize();
+        } else if (strOperator != null) {
+            return strOperator.getFile().getHeader().getArraySize();
+        }
+        return 0;
     }
 
     private static void printStatus() {
@@ -281,15 +410,19 @@ public class View {
             if (intOperator != null) {
                 intOperator.getBuffer().flushAll();
                 intOperator.getFile().close();
+                System.out.println("Файл " + intOperator.getFile().getFilename() + " закрыт");
             }
             if (strFixOperator != null) {
                 strFixOperator.getBuffer().flushAll();
                 strFixOperator.getFile().close();
+                System.out.println("Файл " + strFixOperator.getFile().getFilename() + " закрыт");
             }
             if (strOperator != null) {
                 strOperator.getBuffer().flushAll();
                 strOperator.getFile().close();
-                strOperator.close();
+                strOperator.close(); // Закрываем файл строк
+                System.out.println("Файлы " + strOperator.getFile().getFilename() + " и " +
+                        strOperator.getFile().getFilename() + ".str закрыты");
             }
         } catch (IOException e) {
             System.out.println("Ошибка при закрытии файлов: " + e.getMessage());
