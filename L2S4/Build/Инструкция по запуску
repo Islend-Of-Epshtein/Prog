@@ -1,0 +1,2 @@
+1. Переходим в каталог ./L2S4/Build
+2. java -jar L2S4-Maven.jar
