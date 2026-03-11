@@ -1,0 +1,11 @@
+FileWorker\FileHeader.class
+BufferWorker\BufferWorker.class
+Operators\OperatorStr.class
+Operators\OperatorStrFix.class
+FileWorker\IFileWorker.class
+View\View.class
+BufferWorker\IBufferWorker.class
+FileWorker\FileWorker.class
+BufferWorker\BufferWorker$PageBufferEntry.class
+Operators\Operator.class
+Operators\OperatorInt.class
