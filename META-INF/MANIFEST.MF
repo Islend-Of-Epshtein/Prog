@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: View.View.main
+Main-Class: View.View
 
 

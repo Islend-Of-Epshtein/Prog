@@ -198,8 +198,17 @@ public class BufferWorker implements IBufferWorker {
     }
 
     private int selectVictimPage() {
-        int victim = nextVictimIndex;
-        nextVictimIndex = (nextVictimIndex + 1) % bufferSize;
+
+        //nextVictimIndex = (nextVictimIndex + 1) % bufferSize;
+        PageBufferEntry oldElementIndex = buffers[0] ;
+        int victim = nextVictimIndex, i = 0;
+        for(PageBufferEntry entry: buffers){
+            if(entry.lastAccessTime<oldElementIndex.lastAccessTime) {
+                oldElementIndex = entry;
+                victim = i;
+                i++;
+            }
+        }
         return victim;
     }
 
