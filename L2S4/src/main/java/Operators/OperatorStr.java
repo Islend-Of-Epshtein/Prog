@@ -3,6 +3,8 @@ package Operators;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class OperatorStr extends Operator {
     private final int maxLength;
@@ -10,32 +12,27 @@ public class OperatorStr extends Operator {
     private RandomAccessFile stringFile;
     private boolean stringFileOpen = false;
 
+    // Сигнатура для файла строк (как в методичке)
+    private static final byte[] STRING_FILE_SIGNATURE = {'V', 'M'};
+    private static final int STRING_FILE_HEADER_SIZE = 2; // только сигнатура
+
     // Конструктор для создания нового файла
     public OperatorStr(String filename, long size, String arrayType, int maxLength) {
-        super(filename, size, arrayType, maxLength); // maxLength передаётся в родительский конструктор
+        super(filename, size, arrayType, maxLength);
         this.maxLength = maxLength;
-        this.elementsPerPage = 512 / 4; // 128 указателей на страницу (int по 4 байта)
+        this.elementsPerPage = 512 / 4; // 128 указателей на страницу
 
         try {
             // Создаём отдельный файл для строк
             String stringFilename = filename + ".str";
             stringFile = new RandomAccessFile(stringFilename, "rw");
 
-            // Рассчитываем общий размер файла строк
-            long totalStringSize = size * maxLength;
+            // 1. Записываем сигнатуру
+            stringFile.write(STRING_FILE_SIGNATURE);
 
-            // Выделяем место под все строки (заполняем нулями)
-            byte[] emptyBlock = new byte[8192]; // Пишем блоками для скорости
-            long written = 0;
-            while (written < totalStringSize) {
-                int toWrite = (int) Math.min(emptyBlock.length, totalStringSize - written);
-                stringFile.write(emptyBlock, 0, toWrite);
-                written += toWrite;
-            }
-
+            // Файл пока пустой, данные будут добавляться по мере записи
             stringFileOpen = true;
-            System.out.println("Создан файл строк: " + stringFilename +
-                    " размером " + totalStringSize + " байт");
+            System.out.println("Создан файл строк: " + stringFilename);
 
         } catch (IOException e) {
             throw new RuntimeException("Ошибка создания файла строк: " + e.getMessage());
@@ -46,20 +43,55 @@ public class OperatorStr extends Operator {
     public OperatorStr(String filename) {
         super(filename);
 
-        // Получаем maxLength из заголовка основного файла
         this.maxLength = getFile().getHeader().getStringLength();
         this.elementsPerPage = 512 / 4;
 
         try {
-            // Открываем существующий файл строк
             String stringFilename = filename + ".str";
             stringFile = new RandomAccessFile(stringFilename, "rw");
+
+            // Проверяем сигнатуру
+            byte[] signature = new byte[2];
+            stringFile.read(signature);
+
+            if (signature[0] != STRING_FILE_SIGNATURE[0] ||
+                    signature[1] != STRING_FILE_SIGNATURE[1]) {
+                throw new RuntimeException("Неверная сигнатура файла строк");
+            }
+
             stringFileOpen = true;
             System.out.println("Открыт файл строк: " + stringFilename);
 
         } catch (IOException e) {
             throw new RuntimeException("Ошибка открытия файла строк: " + e.getMessage());
         }
+    }
+
+    /**
+     * Получить позицию для записи строки в файл строк
+     * Строки хранятся последовательно: [длина][данные строки]
+     */
+    private long getStringPositionInFile(long stringIndex) throws IOException {
+        // Проходим по всем строкам до нужного индекса
+        stringFile.seek(STRING_FILE_HEADER_SIZE); // Пропускаем сигнатуру
+        long position = STRING_FILE_HEADER_SIZE;
+
+        for (long i = 0; i < stringIndex; i++) {
+            // Читаем длину строки (4 байта)
+            if (stringFile.getFilePointer() >= stringFile.length()) {
+                return -1; // Строка ещё не записана
+            }
+
+            byte[] lengthBytes = new byte[4];
+            stringFile.read(lengthBytes);
+            int length = ByteBuffer.wrap(lengthBytes).getInt();
+
+            // Пропускаем данные строки
+            stringFile.skipBytes(length);
+            position += 4 + length; // длина + данные
+        }
+
+        return position;
     }
 
     /**
@@ -76,37 +108,46 @@ public class OperatorStr extends Operator {
                 value = value.substring(0, maxLength);
             }
 
-            // 2. Вычисляем позицию в файле строк
-            long position = index * maxLength;
+            // 2. Конвертируем строку в байты
+            byte[] valueBytes = value.getBytes(StandardCharsets.UTF_8);
 
-            // 3. Конвертируем строку в байты (фиксированная длина)
-            byte[] stringBytes = new byte[maxLength];
-            byte[] valueBytes = value.getBytes("UTF-8");
+            // 3. Определяем позицию для записи в файл строк
+            long stringPosition = getStringPositionInFile(index);
 
-            // Копируем байты строки
-            int copyLength = Math.min(valueBytes.length, maxLength);
-            System.arraycopy(valueBytes, 0, stringBytes, 0, copyLength);
+            // Если строка уже была записана, перезаписываем её
+            if (stringPosition != -1) {
+                stringFile.seek(stringPosition);
+            } else {
+                // Иначе добавляем в конец файла
+                stringFile.seek(stringFile.length());
+            }
 
-            // Остальные байты остаются нулями
+            // 4. Записываем длину строки (4 байта)
+            byte[] lengthBytes = ByteBuffer.allocate(4).putInt(valueBytes.length).array();
+            stringFile.write(lengthBytes);
 
-            // 4. Записываем в файл строк
-            stringFile.seek(position);
-            stringFile.write(stringBytes);
+            // 5. Записываем данные строки
+            stringFile.write(valueBytes);
 
-            // 5. Записываем указатель в основной файл
+            // 6. Получаем позицию начала этой записи (для указателя)
+            long recordStartPosition = stringFile.getFilePointer() - 4 - valueBytes.length;
+
+            // 7. Записываем указатель в основной файл
             int pageIndex = (int)(index / elementsPerPage);
             int posInPage = (int)(index % elementsPerPage);
 
             int bufferIndex = getBuffer().loadPage(pageIndex);
 
-            // Указатель - это смещение в файле строк
-            byte[] pointer = ByteBuffer.allocate(4).putInt((int)position).array();
+            // Указатель - это смещение в файле строк (относительно начала файла)
+            byte[] pointer = ByteBuffer.allocate(4).putInt((int)recordStartPosition).array();
 
-            // Записываем указатель (int) в нужное место страницы
+            // Записываем указатель в нужное место страницы
             getBuffer().writeToPage(bufferIndex, posInPage * 4, pointer);
-
-            // Помечаем страницу как изменённую
             getBuffer().markPageDirty(bufferIndex);
+
+            System.out.println("Строка записана: индекс=" + index +
+                    ", позиция в файле строк=" + recordStartPosition +
+                    ", длина=" + valueBytes.length);
 
         } catch (IOException e) {
             throw new RuntimeException("Ошибка записи строки: " + e.getMessage());
@@ -139,26 +180,60 @@ public class OperatorStr extends Operator {
                 return "";
             }
 
-            // 3. Читаем строку из файла строк
+            // 3. Читаем из файла строк по указателю
             stringFile.seek(position);
-            byte[] stringBytes = new byte[maxLength];
+
+            // Читаем длину строки (4 байта)
+            byte[] lengthBytes = new byte[4];
+            stringFile.read(lengthBytes);
+            int strLength = ByteBuffer.wrap(lengthBytes).getInt();
+
+            // Проверяем на валидность длины
+            if (strLength <= 0 || strLength > maxLength * 4) { // *4 для UTF-8
+                System.err.println("Предупреждение: некорректная длина строки: " + strLength);
+                return "[ошибка данных]";
+            }
+
+            // Читаем данные строки
+            byte[] stringBytes = new byte[strLength];
             stringFile.read(stringBytes);
 
-            // 4. Находим конец строки (первый нулевой байт)
-            int realLength = 0;
-            while (realLength < maxLength && stringBytes[realLength] != 0) {
-                realLength++;
-            }
-
-            // 5. Конвертируем в строку
-            if (realLength == 0) {
-                return "";
-            }
-            return new String(stringBytes, 0, realLength, "UTF-8");
+            // Конвертируем в строку
+            return new String(stringBytes, 0, strLength, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
             throw new RuntimeException("Ошибка чтения строки: " + e.getMessage());
         }
+    }
+
+    /**
+     * Получить информацию о файле строк
+     */
+    public String getStringFileInfo() throws IOException {
+        if (stringFile == null) return "Файл строк не открыт";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== Информация о файле строк ===\n");
+        sb.append("Размер файла: ").append(stringFile.length()).append(" байт\n");
+        sb.append("Сигнатура: присутствует\n");
+
+        // Подсчитываем количество записанных строк
+        long pos = STRING_FILE_HEADER_SIZE;
+        long count = 0;
+        stringFile.seek(pos);
+
+        while (pos < stringFile.length()) {
+            byte[] lenBytes = new byte[4];
+            if (stringFile.read(lenBytes) != 4) break;
+            int len = ByteBuffer.wrap(lenBytes).getInt();
+            pos = stringFile.getFilePointer() + len;
+            stringFile.seek(pos);
+            count++;
+        }
+
+        sb.append("Записано строк: ").append(count).append("\n");
+        sb.append("==============================\n");
+        return sb.toString();
     }
 
     /**
@@ -167,6 +242,9 @@ public class OperatorStr extends Operator {
     public void close() {
         try {
             if (stringFile != null) {
+                // Перед закрытием сбрасываем все буферы
+                getBuffer().flushAll();
+
                 stringFile.close();
                 stringFileOpen = false;
                 System.out.println("Файл строк закрыт");

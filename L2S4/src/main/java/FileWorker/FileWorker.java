@@ -22,7 +22,7 @@ public class FileWorker implements IFileWorker {
         header.setArraySize(size);
         header.setDataType((byte)dataType.charAt(0));
         header.setStringLength(stringLength);
-        // pageSize уже 512 по умолчанию
+
 
         int elementSize = getElementSize(dataType, stringLength);
         header.setElementsPerPage(header.getPageSize() / elementSize);
