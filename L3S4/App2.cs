@@ -9,7 +9,7 @@ namespace L3S4
     /// <summary>
     /// Вариант позднего связывания
     /// </summary>
-    internal class App2 : App
+    internal class App2 : App0
     {
 
     }

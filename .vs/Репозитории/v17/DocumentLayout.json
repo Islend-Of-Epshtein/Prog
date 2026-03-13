@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\",
+  "Documents": [],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

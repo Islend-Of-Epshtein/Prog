@@ -12,20 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-
 namespace L3S4
 {
     /// <summary>
-    /// Логика взаимодействия для LogInFrame.xaml
+    /// Логика взаимодействия для MenuMain.xaml
     /// </summary>
-    public partial class LogInFrame : Window
+    public partial class MenuMain : Window
     {
-        public LogInFrame(Object obj)
+        public MenuMain()
         {
-            this.DataContext = obj;
-            InitializeComponent();
-            Visibility = Visibility.Visible;
-            Show();
+            new App0();
         }
     }
 }

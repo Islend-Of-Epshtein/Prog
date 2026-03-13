@@ -14,22 +14,9 @@ namespace L3S4
     /// </summary>
     public partial class App : Application
     {
-       
-        List<Element> elements;
-        public App()
+        private void Application_Startup(object sender, StartupEventArgs e)
         {
-            elements = new List<Element>();
-            LogInFrame frame = new LogInFrame();
+            new App0();
         }
-        internal App(List<Element> elements)
-        {
-            this.elements = elements;
-            //InitializeComponent();  
-        }
-        public void InitLogInFrame()
-        {
-
-        }
-
     }
 }

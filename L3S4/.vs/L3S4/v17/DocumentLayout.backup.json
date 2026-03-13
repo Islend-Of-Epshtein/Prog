@@ -1,42 +1,50 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\",
+  "WorkspaceRootPath": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\app1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\app2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\element.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:element.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\loginframe.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:loginframe.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\loginframe.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\loginframe.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:loginframe.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\loginframe.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:loginframe.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\l3s4\\app0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\l3s4\\menumain.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:menumain.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\l3s4\\menumain.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:menumain.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\l3s4\\app1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\element.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:element.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|c:\\users\\u-ber\\\u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\prog\\l3s4\\obj\\debug\\app\\app.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:obj\\debug\\app\\app.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\app2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{93DE58EE-3EDB-41F9-829C-B1EAF34A1932}|L3S4.csproj|solutionrelative:app2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,79 +54,108 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "App0.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App0.cs",
+              "RelativeDocumentMoniker": "App0.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App0.cs",
+              "RelativeToolTip": "App0.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-13T18:31:37.569Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MenuMain.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\MenuMain.xaml.cs",
+              "RelativeDocumentMoniker": "MenuMain.xaml.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\MenuMain.xaml.cs",
+              "RelativeToolTip": "MenuMain.xaml.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABcAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-13T18:22:34.285Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "MenuMain.xaml",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\MenuMain.xaml",
+              "RelativeDocumentMoniker": "MenuMain.xaml",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\MenuMain.xaml",
+              "RelativeToolTip": "MenuMain.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-13T18:22:26.385Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "LogInFrame.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\LogInFrame.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\LogInFrame.xaml.cs",
               "RelativeDocumentMoniker": "LogInFrame.xaml.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\LogInFrame.xaml.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\LogInFrame.xaml.cs",
               "RelativeToolTip": "LogInFrame.xaml.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAmwBgAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAmwBcAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T07:57:08.801Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "LogInFrame.xaml",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\LogInFrame.xaml",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\LogInFrame.xaml",
               "RelativeDocumentMoniker": "LogInFrame.xaml",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\LogInFrame.xaml",
-              "RelativeToolTip": "LogInFrame.xaml",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\LogInFrame.xaml*",
+              "RelativeToolTip": "LogInFrame.xaml*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-03-13T07:57:04.562Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 10,
               "Title": "App2.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App2.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App2.cs",
               "RelativeDocumentMoniker": "App2.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App2.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App2.cs",
               "RelativeToolTip": "App2.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T07:43:27.255Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "App1.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App1.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App1.cs",
               "RelativeDocumentMoniker": "App1.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App1.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App1.cs",
               "RelativeToolTip": "App1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T07:43:03.362Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "App.g.i.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\obj\\Debug\\App\\App.g.i.cs",
-              "RelativeDocumentMoniker": "obj\\Debug\\App\\App.g.i.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\obj\\Debug\\App\\App.g.i.cs",
-              "RelativeToolTip": "obj\\Debug\\App\\App.g.i.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAhwDUAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T07:41:28.801Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "Element.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\Element.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\Element.cs",
               "RelativeDocumentMoniker": "Element.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\Element.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\Element.cs",
               "RelativeToolTip": "Element.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -127,11 +164,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "App.config",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.config",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.config",
               "RelativeDocumentMoniker": "App.config",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.config",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.config",
               "RelativeToolTip": "App.config",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
@@ -140,24 +177,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "App.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.xaml.cs",
               "RelativeDocumentMoniker": "App.xaml.cs",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.xaml.cs",
               "RelativeToolTip": "App.xaml.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABAAAAAHAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-13T07:34:45.247Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "App.xaml",
-              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.xaml",
+              "DocumentMoniker": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.xaml",
               "RelativeDocumentMoniker": "App.xaml",
-              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\Prog\\L3S4\\App.xaml",
+              "ToolTip": "C:\\Users\\U-ber\\\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0438\u0438\\L3S4\\App.xaml",
               "RelativeToolTip": "App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-03-13T07:34:35.199Z",

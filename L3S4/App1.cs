@@ -11,7 +11,7 @@ namespace L3S4
     /// <summary>
     /// Вариант раннего связывания
     /// </summary>
-    internal class App1 : App
+    internal class App1 : App0
     {
         private AuthLibrary.AuthService authLibrary;
         private MenuLibrary.MenuModel menuModel;    

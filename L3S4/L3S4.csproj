@@ -67,12 +67,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App0.cs" />
     <Compile Include="App1.cs" />
     <Compile Include="App2.cs" />
     <Compile Include="LogInFrame.xaml.cs">
       <DependentUpon>LogInFrame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Element.cs" />
+    <Compile Include="MenuMain.xaml.cs">
+      <DependentUpon>MenuMain.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,6 +110,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MenuMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="key.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="pngwing.com.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
