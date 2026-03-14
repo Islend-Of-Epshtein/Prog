@@ -38,3 +38,7 @@ C:\Users\U-ber\Репозитории\L3S4\obj\Debug\L3S4.exe
 C:\Users\U-ber\Репозитории\L3S4\obj\Debug\L3S4.pdb
 C:\Users\U-ber\Репозитории\L3S4\obj\Debug\MenuMain.g.cs
 C:\Users\U-ber\Репозитории\L3S4\obj\Debug\MenuMain.baml
+C:\Users\U-ber\Репозитории\Prog\L3S4\obj\Debug\MenuFrame.baml
+C:\Users\U-ber\Репозитории\Prog\L3S4\obj\Debug\MenuFrame.g.cs
+C:\Users\U-ber\Репозитории\Prog\L3S4\obj\Debug\MenuMain.g.cs
+C:\Users\U-ber\Репозитории\Prog\L3S4\obj\Debug\MenuMain.baml
