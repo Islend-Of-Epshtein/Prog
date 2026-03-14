@@ -66,6 +66,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MenuFrame.xaml.cs" />
     <Compile Include="PropertyChange.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +111,9 @@
   <ItemGroup>
     <Page Include="LogInFrame.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MenuFrame.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MenuMain.xaml">

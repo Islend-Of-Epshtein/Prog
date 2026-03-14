@@ -1,15 +1,25 @@
 ﻿using System;
 
-struct Element
+namespace L3S4
 {
-    int TreeNumber;
-    string Name;
-    string MethodName;
-
-    public  Element (int TreeNumber, string Name, String MethodName = null)
+    public class Element
     {
-        this.TreeNumber = TreeNumber;
-        this.Name = Name;
-        this.MethodName = MethodName;
+        public int TreeNumber { get; }
+        public string Name { get; }
+        public string MethodName { get; }
+
+        public Element(int treeNumber, string name, string methodName = null)
+        {
+            TreeNumber = treeNumber;
+            Name = name ?? string.Empty;
+            MethodName = string.IsNullOrWhiteSpace(methodName) || methodName.Equals("Null", StringComparison.OrdinalIgnoreCase)
+                ? null
+                : methodName;
+        }
+
+        public override string ToString()
+        {
+            return $"{TreeNumber} {Name} {MethodName}";
+        }
     }
-}
+}   
