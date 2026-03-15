@@ -1,34 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
+using WpfBrushes = System.Windows.Media.Brushes;
+using WpfColor = System.Windows.Media.Color;
+using WpfColorConverter = System.Windows.Media.ColorConverter;
+using WpfFontFamily = System.Windows.Media.FontFamily;
+using WpfSolidColorBrush = System.Windows.Media.SolidColorBrush;
 
 namespace L3S4
 {
-    
-    /// <summary>
-    /// Логика взаимодействия для LogInFrame.xaml
-    /// </summary>
     public partial class LogInFrame : Window
     {
-        private string _password;
-        private App0 obj;
-        public LogInFrame(Object obj)
+        private string _password = string.Empty;
+        private readonly App0 obj;
+        private bool _isUpdatingPassword;
+
+        public LogInFrame(object obj)
         {
             this.obj = (App0)obj;
-            this.DataContext = obj;
+            DataContext = obj;
             InitializeComponent();
             Visibility = Visibility.Visible;
             Show();
@@ -36,44 +28,76 @@ namespace L3S4
 
         private void buttonEnter_Click(object sender, RoutedEventArgs e)
         {
-            if (obj.CheckPassword(FieldName.Text.Trim(), FieldPaswword.Text.Trim()))
-            {
-                this.Close();
+            string login = FieldName.Text.Trim();
+            string password = _password.Trim();
 
+            if (obj.CheckPassword(login, password))
+            {
+                MenuMain menuMain = new MenuMain(obj);
+                menuMain.Show();
+                Close();
             }
             else
             {
-                ShowErrorToast("Неверный логин или пароль!",500);
+                ShowErrorToast("Неверный логин или пароль!", 500);
             }
         }
 
         private void FieldPaswword_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _password = FieldPaswword.Text;
-            string arr = new string('*',FieldPaswword.Text.Length);
-            FieldPaswword.Text = arr;
-            FieldPaswword.Select(arr.Length, arr.Length);
+            if (_isUpdatingPassword)
+            {
+                return;
+            }
+
+            _isUpdatingPassword = true;
+
+            string currentText = FieldPaswword.Text;
+
+            if (currentText.Length > _password.Length)
+            {
+                _password += currentText[currentText.Length - 1];
+            }
+            else if (currentText.Length < _password.Length && _password.Length > 0)
+            {
+                _password = _password.Substring(0, currentText.Length);
+            }
+
+            FieldPaswword.Text = new string('*', _password.Length);
+            FieldPaswword.SelectionStart = FieldPaswword.Text.Length;
+
+            _isUpdatingPassword = false;
         }
 
-       
+        private void buttonCanel_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void FieldName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+        }
+
         public static void ShowErrorToast(string message, int duration = 3000)
         {
-            var toast = new Window
+            Window toast = new Window
             {
                 Width = 350,
                 Height = 80,
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
-                Background = System.Windows.Media.Brushes.Transparent,
+                Background = WpfBrushes.Transparent,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Topmost = true,
                 ShowInTaskbar = false
             };
 
-            var border = new Border
+            Border border = new Border
             {
-                Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FEE2E2")),
-                BorderBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FECACA")),
+                Background = new WpfSolidColorBrush(
+                    (WpfColor)WpfColorConverter.ConvertFromString("#FEE2E2")),
+                BorderBrush = new WpfSolidColorBrush(
+                    (WpfColor)WpfColorConverter.ConvertFromString("#FECACA")),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(10),
                 Margin = new Thickness(10),
@@ -85,24 +109,25 @@ namespace L3S4
                 }
             };
 
-            var grid = new Grid { Margin = new Thickness(15) };
+            Grid grid = new Grid { Margin = new Thickness(15) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            var icon = new TextBlock
+            TextBlock icon = new TextBlock
             {
                 Text = "⚠️",
                 FontSize = 24,
-                FontFamily = new System.Windows.Media.FontFamily("Segoe UI Emoji"),
+                FontFamily = new WpfFontFamily("Segoe UI Emoji"),
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 10, 0)
             };
             Grid.SetColumn(icon, 0);
 
-            var textBlock = new TextBlock
+            TextBlock textBlock = new TextBlock
             {
                 Text = message,
-                Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#991B1B")),
+                Foreground = new WpfSolidColorBrush(
+                    (WpfColor)WpfColorConverter.ConvertFromString("#991B1B")),
                 FontSize = 14,
                 FontWeight = FontWeights.Medium,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -117,25 +142,22 @@ namespace L3S4
 
             toast.Loaded += (s, e) =>
             {
-                var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(duration) };
+                System.Windows.Threading.DispatcherTimer timer =
+                    new System.Windows.Threading.DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromMilliseconds(duration)
+                    };
+
                 timer.Tick += (sender, args) =>
                 {
                     timer.Stop();
                     toast.Close();
                 };
+
                 timer.Start();
             };
 
             toast.Show();
-        }
-
-        private void buttonCanel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        } 
-        private void FieldName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
     }
 }

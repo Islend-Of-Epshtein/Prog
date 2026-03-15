@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:L3S4"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Вход" Height="300" Width="490" ResizeMode="CanResizeWithGrip" >
+        Title="Вход" Height="300" Width="490" ResizeMode="CanResizeWithGrip" Icon="/logo.png" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"></RowDefinition>

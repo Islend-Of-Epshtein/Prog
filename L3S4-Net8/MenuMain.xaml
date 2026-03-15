@@ -5,8 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:L3S4"
         mc:Ignorable="d"
-        Title="MenuMain" Height="450" Width="800">
-    <Grid>
-        
+        Title="АИС Отдел кадров"
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Background="#95d9ed">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхний ряд главных кнопок -->
+        <Border Grid.Row="0"
+                Background="#f7f48b"
+                BorderBrush="#C8C55E"
+                BorderThickness="0,0,0,1"
+                Padding="8">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <WrapPanel x:Name="ButtonsPanel"
+                           Orientation="Horizontal"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Второй ряд подпунктов -->
+        <Border Grid.Row="1"
+                Background="#fabf48"
+                BorderBrush="#D39E2A"
+                BorderThickness="0,0,0,1"
+                Padding="8">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <WrapPanel x:Name="ItemsPanel"
+                           Orientation="Horizontal"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Область информации -->
+        <Border Grid.Row="2"
+                Margin="12"
+                Background="White"
+                BorderBrush="#CCCCCC"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12">
+            <TextBlock x:Name="HeaderText"
+                       Text="Выбери раздел сверхуЯдаун"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap"/>
+        </Border>
     </Grid>
 </Window>

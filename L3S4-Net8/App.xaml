@@ -1,9 +1,6 @@
-﻿<Application x:Class="L3S4_Net8.App"
+﻿<Application x:Class="L3S4.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:L3S4_Net8"
-             Startup="Application_Startup">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

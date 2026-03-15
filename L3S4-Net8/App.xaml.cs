@@ -1,19 +1,20 @@
-﻿using L3S4;
-using System.Configuration;
-using System.Data;
+﻿using System;
+using System.IO;
 using System.Windows;
 
-namespace L3S4_Net8
+namespace L3S4
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : System.Windows.Application
     {
-        private void Application_Startup(object sender, StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
-            new App0();
+            base.OnStartup(e);
+
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string menuPath = Path.Combine(basePath, "menu.txt");
+            string usersPath = Path.Combine(basePath, "users.txt");
+
+            new App1(menuPath, usersPath);
         }
     }
-
 }
