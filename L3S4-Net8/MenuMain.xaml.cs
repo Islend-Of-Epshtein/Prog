@@ -1,6 +1,6 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,23 +15,17 @@ namespace L3S4
             _app = app;
             InitializeComponent();
 
-            Loaded += MenuMain_Loaded;
-            _app.ElementsUpdated += App_ElementsUpdated;
+            Loaded += MenuMain_Loaded!;
+            _app.ElementsUpdated += App_ElementsUpdated!;
         }
 
-        private void MenuMain_Loaded(object sender, RoutedEventArgs e)
-        {
-            BuildMenuFromElements();
-        }
+        private void MenuMain_Loaded(object? sender, RoutedEventArgs e) => BuildMenuFromElements();
 
-        private void App_ElementsUpdated(object sender, EventArgs e)
-        {
-            BuildMenuFromElements();
-        }
+        private void App_ElementsUpdated(object? sender, EventArgs e) => BuildMenuFromElements();
 
         protected override void OnClosed(EventArgs e)
         {
-            _app.ElementsUpdated -= App_ElementsUpdated;
+            _app.ElementsUpdated -= App_ElementsUpdated!;
             base.OnClosed(e);
         }
 
@@ -40,87 +34,70 @@ namespace L3S4
             MainMenu.Items.Clear();
 
             var all = _app.GetElements().ToList();
-
             if (all.Count == 0)
             {
                 HeaderText.Text = "Разделы меню не найдены.";
                 return;
             }
 
-            for (int rootIndex = 0; rootIndex < all.Count; rootIndex++)
+            int index = 0;
+            while (index < all.Count)
             {
-                var root = all[rootIndex];
-                if (root.TreeNumber != 0)
+                if (all[index].TreeNumber != 0)
+                {
+                    index++;
                     continue;
-
-                var rootMenuItem = new MenuItem
-                {
-                    Header = root.Name,
-                    Tag = root
-                };
-
-                int childCount = 0;
-
-                for (int i = rootIndex + 1; i < all.Count; i++)
-                {
-                    if (all[i].TreeNumber == 0)
-                        break;
-
-                    if (all[i].TreeNumber == 1)
-                    {
-                        var child = all[i];
-                        var childMenuItem = new MenuItem
-                        {
-                            Header = child.Name,
-                            Tag = child
-                        };
-
-                        childMenuItem.Click += LeafMenuItem_Click;
-                        rootMenuItem.Items.Add(childMenuItem);
-                        childCount++;
-                    }
                 }
 
-                // Если детей нет — это обычный пункт, по нему можно кликнуть
-                if (childCount == 0)
-                {
-                    rootMenuItem.Click += LeafMenuItem_Click;
-                }
-
-                MainMenu.Items.Add(rootMenuItem);
+                var rootItem = BuildMenuItem(all, ref index, 0);
+                MainMenu.Items.Add(rootItem);
             }
 
             HeaderText.Text = "Выбери раздел меню";
         }
 
-        private bool HasMethod(string methodName)
+        private MenuItem BuildMenuItem(System.Collections.Generic.IList<Element> nodes, ref int index, int currentLevel)
         {
-            if (string.IsNullOrWhiteSpace(methodName))
-                return false;
-
-            var method = _app.GetType().GetMethod(
-                methodName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                null,
-                Type.EmptyTypes,
-                null);
-
-            return method != null;
-        }
-
-        private void LeafMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuItem menuItem || menuItem.Tag is not Element element)
-                return;
-
-            HeaderText.Text = $"Выбран пункт: {element.Name}";
-
-            // Если метод реально есть — вызываем.
-            // Если метода нет — просто показываем название пункта в окне.
-            if (HasMethod(element.MethodName))
+            var current = nodes[index];
+            var item = new MenuItem
             {
-                _app.InvokeMethod(element.MethodName);
+                Header = current.Name,
+                Tag = current
+            };
+
+            index++;
+
+            while (index < nodes.Count)
+            {
+                int nextLevel = nodes[index].TreeNumber;
+                if (nextLevel <= currentLevel)
+                    break;
+
+                if (nextLevel == currentLevel + 1)
+                {
+                    var child = BuildMenuItem(nodes, ref index, currentLevel + 1);
+                    item.Items.Add(child);
+                }
+                else
+                {
+                    index++;
+                }
             }
+
+            if (item.Items.Count == 0)
+            {
+                item.Click += (sender, e) =>
+                {
+                    HeaderText.Text = $"Выбран пункт: {current.Name}";
+                    if (!string.IsNullOrWhiteSpace(current.MethodName))
+                    {
+                        _app.InvokeMethod(current.MethodName);
+                    }
+                };
+            }
+
+            return item;
         }
     }
 }
+#nullable restore

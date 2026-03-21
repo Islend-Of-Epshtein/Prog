@@ -96,7 +96,7 @@
                         HorizontalAlignment="Stretch" FontSize="16" Margin="8"/>
 
             <TextBox x:Name="FieldPaswword" Margin="10,20,10,20" Grid.Column="1" Background="White" 
-                        BorderBrush="Black" Text="V" HorizontalAlignment="Stretch"
+                        BorderBrush="Black" Text="123" HorizontalAlignment="Stretch"
                         VerticalAlignment="Center" BorderThickness="1" TextChanged="FieldPaswword_TextChanged"/>
         </Grid>
         <Grid Grid.Row="4">

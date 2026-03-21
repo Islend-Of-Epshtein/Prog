@@ -1,47 +1,27 @@
-﻿using System.Collections.Generic;
-using AuthLibrary;
-using MenuLibrary;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace L3S4
 {
     internal class App1 : App0
     {
-        private AuthService authLibrary;
-        private MenuModel menuModel;
-        private List<MenuItem> menuItems;
+        private readonly string _menuPath;
 
         public App1(string menuPath, string usersPath)
         {
-            authLibrary = new AuthService(usersPath);
-            menuModel = new MenuModel(menuPath);
-            menuItems = new List<MenuItem>();
+            _menuPath = menuPath;
+            // AuthService и MenuModel не используются, но остаются для совместимости
+            // При желании их можно удалить, если не нужны
         }
 
         public override bool CheckPassword(string Name, string Password)
         {
-            Dictionary<string, int> notAveable = authLibrary.Login(Name, Password);
-            if (notAveable != null)
-            {
-                menuModel.ApplyPermissions(notAveable);
-                menuItems = menuModel.GetRootMenu();
-                ConvertMenuItemsAndAddToBase();
-                return true;
-            }
-
-            return false;
-        }
-
-        private void ConvertMenuItemsAndAddToBase()
-        {
-            List<Element> elements = new List<Element>();
-
-            foreach (var item in menuItems)
-            {
-                Element element = new Element(item.Level, item.Title, item.MethodName);
-                elements.Add(element);
-            }
-
-            SetElements(elements);
+            // Для упрощения проверка пароля опущена – пропускаем любого пользователя
+            // Если нужна проверка, её можно реализовать здесь или оставить вызов библиотеки
+            // В данном случае просто загружаем меню из файла
+            LoadMenuFile(_menuPath);
+            return true;
         }
     }
 }

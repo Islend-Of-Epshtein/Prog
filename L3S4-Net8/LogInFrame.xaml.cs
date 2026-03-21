@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Effects;
@@ -45,22 +46,18 @@ namespace L3S4
 
         private void FieldPaswword_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_isUpdatingPassword)
-            {
-                return;
-            }
+            if (_isUpdatingPassword) return;
 
             _isUpdatingPassword = true;
 
             string currentText = FieldPaswword.Text;
-
             if (currentText.Length > _password.Length)
             {
-                _password += currentText[currentText.Length - 1];
+                _password += currentText[^1];
             }
             else if (currentText.Length < _password.Length && _password.Length > 0)
             {
-                _password = _password.Substring(0, currentText.Length);
+                _password = _password[..currentText.Length];
             }
 
             FieldPaswword.Text = new string('*', _password.Length);
@@ -69,14 +66,9 @@ namespace L3S4
             _isUpdatingPassword = false;
         }
 
-        private void buttonCanel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void buttonCanel_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void FieldName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-        }
+        private void FieldName_TextChanged(object sender, TextChangedEventArgs e) { }
 
         public static void ShowErrorToast(string message, int duration = 3000)
         {
@@ -94,19 +86,12 @@ namespace L3S4
 
             Border border = new Border
             {
-                Background = new WpfSolidColorBrush(
-                    (WpfColor)WpfColorConverter.ConvertFromString("#FEE2E2")),
-                BorderBrush = new WpfSolidColorBrush(
-                    (WpfColor)WpfColorConverter.ConvertFromString("#FECACA")),
+                Background = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#FEE2E2")!),
+                BorderBrush = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#FECACA")!),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(10),
                 Margin = new Thickness(10),
-                Effect = new DropShadowEffect
-                {
-                    BlurRadius = 15,
-                    ShadowDepth = 2,
-                    Opacity = 0.3
-                }
+                Effect = new DropShadowEffect { BlurRadius = 15, ShadowDepth = 2, Opacity = 0.3 }
             };
 
             Grid grid = new Grid { Margin = new Thickness(15) };
@@ -126,8 +111,7 @@ namespace L3S4
             TextBlock textBlock = new TextBlock
             {
                 Text = message,
-                Foreground = new WpfSolidColorBrush(
-                    (WpfColor)WpfColorConverter.ConvertFromString("#991B1B")),
+                Foreground = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#991B1B")!),
                 FontSize = 14,
                 FontWeight = FontWeights.Medium,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -142,18 +126,15 @@ namespace L3S4
 
             toast.Loaded += (s, e) =>
             {
-                System.Windows.Threading.DispatcherTimer timer =
-                    new System.Windows.Threading.DispatcherTimer
-                    {
-                        Interval = TimeSpan.FromMilliseconds(duration)
-                    };
-
+                System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer
+                {
+                    Interval = TimeSpan.FromMilliseconds(duration)
+                };
                 timer.Tick += (sender, args) =>
                 {
                     timer.Stop();
                     toast.Close();
                 };
-
                 timer.Start();
             };
 
@@ -161,3 +142,4 @@ namespace L3S4
         }
     }
 }
+#nullable restore
