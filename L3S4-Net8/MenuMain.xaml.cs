@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
-
-using WpfButton = System.Windows.Controls.Button;
-using WpfWrapPanel = System.Windows.Controls.WrapPanel;
-using WpfMessageBox = System.Windows.MessageBox;
-using WpfMessageBoxButton = System.Windows.MessageBoxButton;
-using WpfMessageBoxImage = System.Windows.MessageBoxImage;
-using WpfHorizontalAlignment = System.Windows.HorizontalAlignment;
+using System.Windows.Controls;
 
 namespace L3S4
 {
@@ -21,114 +16,110 @@ namespace L3S4
             InitializeComponent();
 
             Loaded += MenuMain_Loaded;
+            _app.ElementsUpdated += App_ElementsUpdated;
         }
 
         private void MenuMain_Loaded(object sender, RoutedEventArgs e)
         {
-            BuildButtonsFromElements();
+            BuildMenuFromElements();
         }
 
-        private void BuildButtonsFromElements()
+        private void App_ElementsUpdated(object sender, EventArgs e)
         {
-            ButtonsPanel.Children.Clear();
-            ItemsPanel.Children.Clear();
-
-            var roots = _app.GetElements()
-                .Where(x => x.TreeNumber == 0)
-                .ToList();
-
-            foreach (var root in roots)
-            {
-                WpfButton button = new WpfButton
-                {
-                    Content = root.Name,
-                    Tag = root,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(12, 6, 12, 6),
-                    MinWidth = 110
-                };
-
-                button.Click += RootButton_Click;
-                ButtonsPanel.Children.Add(button);
-            }
-
-            HeaderText.Text = roots.Count == 0
-                ? "Разделы меню не найдены в menu.txt"
-                : "Выбери раздел сверху";
+            BuildMenuFromElements();
         }
 
-        private void RootButton_Click(object sender, RoutedEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            if (sender is not WpfButton button || button.Tag is not Element root)
-            {
-                return;
-            }
+            _app.ElementsUpdated -= App_ElementsUpdated;
+            base.OnClosed(e);
+        }
 
-            ItemsPanel.Children.Clear();
+        private void BuildMenuFromElements()
+        {
+            MainMenu.Items.Clear();
 
             var all = _app.GetElements().ToList();
-            int rootIndex = all.FindIndex(x => ReferenceEquals(x, root));
 
-            if (rootIndex < 0)
+            if (all.Count == 0)
             {
-                HeaderText.Text = $"Не удалось найти раздел: {root.Name}";
+                HeaderText.Text = "Разделы меню не найдены.";
                 return;
             }
 
-            int childCount = 0;
-
-            for (int i = rootIndex + 1; i < all.Count; i++)
+            for (int rootIndex = 0; rootIndex < all.Count; rootIndex++)
             {
-                if (all[i].TreeNumber == 0)
-                {
-                    break;
-                }
+                var root = all[rootIndex];
+                if (root.TreeNumber != 0)
+                    continue;
 
-                if (all[i].TreeNumber == 1)
+                var rootMenuItem = new MenuItem
                 {
-                    Element child = all[i];
+                    Header = root.Name,
+                    Tag = root
+                };
 
-                    WpfButton childButton = new WpfButton
+                int childCount = 0;
+
+                for (int i = rootIndex + 1; i < all.Count; i++)
+                {
+                    if (all[i].TreeNumber == 0)
+                        break;
+
+                    if (all[i].TreeNumber == 1)
                     {
-                        Content = child.Name,
-                        Tag = child,
-                        Margin = new Thickness(4),
-                        Padding = new Thickness(10, 6, 10, 6),
-                        HorizontalContentAlignment = WpfHorizontalAlignment.Left,
-                        MinWidth = 120
-                    };
+                        var child = all[i];
+                        var childMenuItem = new MenuItem
+                        {
+                            Header = child.Name,
+                            Tag = child
+                        };
 
-                    childButton.Click += ChildButton_Click;
-                    ItemsPanel.Children.Add(childButton);
-                    childCount++;
+                        childMenuItem.Click += LeafMenuItem_Click;
+                        rootMenuItem.Items.Add(childMenuItem);
+                        childCount++;
+                    }
                 }
+
+                // Если детей нет — это обычный пункт, по нему можно кликнуть
+                if (childCount == 0)
+                {
+                    rootMenuItem.Click += LeafMenuItem_Click;
+                }
+
+                MainMenu.Items.Add(rootMenuItem);
             }
 
-            HeaderText.Text = childCount == 0
-                ? $"Раздел: {root.Name}. Подпунктов пока нет."
-                : $"Раздел: {root.Name}. Выбери подпункт.";
+            HeaderText.Text = "Выбери раздел меню";
         }
 
-        private void ChildButton_Click(object sender, RoutedEventArgs e)
+        private bool HasMethod(string methodName)
         {
-            if (sender is not WpfButton button || button.Tag is not Element child)
-            {
+            if (string.IsNullOrWhiteSpace(methodName))
+                return false;
+
+            var method = _app.GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                Type.EmptyTypes,
+                null);
+
+            return method != null;
+        }
+
+        private void LeafMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem menuItem || menuItem.Tag is not Element element)
                 return;
-            }
 
-            HeaderText.Text = $"Выбран пункт: {child.Name}";
+            HeaderText.Text = $"Выбран пункт: {element.Name}";
 
-            if (!string.IsNullOrWhiteSpace(child.MethodName))
+            // Если метод реально есть — вызываем.
+            // Если метода нет — просто показываем название пункта в окне.
+            if (HasMethod(element.MethodName))
             {
-                _app.InvokeMethod(child.MethodName);
-            }
-            else
-            {
-                WpfMessageBox.Show(
-                    $"Пункт: {child.Name}",
-                    "Информация",
-                    WpfMessageBoxButton.OK,
-                    WpfMessageBoxImage.Information);
+                _app.InvokeMethod(element.MethodName);
             }
         }
     }

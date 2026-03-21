@@ -1,6 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Threading;
+using System.Windows.Forms;
+
+using WpfMessageBox = System.Windows.MessageBox;
+using WpfMessageBoxButton = System.Windows.MessageBoxButton;
+using WpfMessageBoxImage = System.Windows.MessageBoxImage;
 
 namespace L3S4
 {
@@ -20,24 +28,29 @@ namespace L3S4
         {
             get
             {
-                return this._capsLook ? "Нажата" : "Не нажата";
+                return _capsLook ? "Нажата" : "Не нажата";
             }
         }
+
         public bool CapsLookSet
         {
             set
             {
-                this._capsLook = value;
+                _capsLook = value;
                 OnPropertyChanged(nameof(CapsLookGet));
                 OnPropertyChanged(nameof(CapsLookSet));
             }
         }
+
         public string SelectLanguage
         {
-            get { return this._language; }
+            get
+            {
+                return _language;
+            }
             set
             {
-                this._language = value;
+                _language = value;
                 OnPropertyChanged(nameof(SelectLanguage));
             }
         }
@@ -47,20 +60,23 @@ namespace L3S4
             elements = new List<Element>();
             Init();
         }
+
         public App0(string version)
         {
             Version = version;
             elements = new List<Element>();
             Init();
         }
-        private void Init() {
+
+        private void Init()
+        {
             _selectLanguage = InputLanguage.CurrentInputLanguage;
             SelectLanguage = GetDisplayLanguageName(_selectLanguage);
 
             InitializeTimer(100);
-
             InitLogInFrame();
         }
+
         private void InitializeTimer(int updateTime)
         {
             _timer = new DispatcherTimer();
@@ -82,15 +98,12 @@ namespace L3S4
             {
                 _selectLanguage = currentLanguage;
                 SelectLanguage = GetDisplayLanguageName(currentLanguage);
-
                 OnPropertyChanged(nameof(SelectLanguage));
             }
         }
 
         private string GetDisplayLanguageName(InputLanguage language)
         {
-            string cultureName = language.Culture.EnglishName;
-
             switch (language.LayoutName)
             {
                 case "Русская":
@@ -102,6 +115,7 @@ namespace L3S4
                 case "English":
                 case "Английский":
                     return "Английский";
+
                 default:
                     return language.LayoutName;
             }
@@ -137,18 +151,22 @@ namespace L3S4
                 _timer = null;
             }
         }
+
         private void InitLogInFrame()
         {
             LogInFrame logInFrame = new LogInFrame(this);
         }
+
         public virtual bool CheckPassword(string Name, string Password)
         {
             throw new Exception("Вызван базовый метод CheckPasword. Dll не загружен.");
         }
+
         public string Version
         {
-            get {
-                return "Версия "+ _version;
+            get
+            {
+                return "Версия " + _version;
             }
             set
             {
@@ -160,31 +178,37 @@ namespace L3S4
             }
         }
 
-        // Новые методы для работы с elements
+        protected void SetElements(IEnumerable<Element> newElements)
+        {
+            elements = newElements?.ToList() ?? new List<Element>();
+            ElementsUpdated?.Invoke(this, EventArgs.Empty);
+        }
 
-        // Загружает menu.txt по пути. Поддерживает строки:
-        // <treeNumber> <name...> <methodName|Null>
-        // Игнорирует пустые строки и строки, начинающиеся с '#' или '//'
         public void LoadMenuFile(string path)
         {
             if (!File.Exists(path))
+            {
                 throw new FileNotFoundException("menu file not found", path);
+            }
 
             var list = new List<Element>();
+
             foreach (var raw in File.ReadAllLines(path))
             {
-                if (string.IsNullOrWhiteSpace(raw)) continue;
+                if (string.IsNullOrWhiteSpace(raw))
+                    continue;
+
                 var line = raw.Trim();
-                if (line.StartsWith("#") || line.StartsWith("//")) continue;
+
+                if (line.StartsWith("#") || line.StartsWith("//"))
+                    continue;
 
                 var tokens = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length < 2) continue;
+                if (tokens.Length < 2)
+                    continue;
 
                 if (!int.TryParse(tokens[0], out int tree))
-                {
-                    // если первая токен не число — пропустить
                     continue;
-                }
 
                 string method = null;
                 string name;
@@ -195,8 +219,8 @@ namespace L3S4
                 }
                 else
                 {
-                    // последний токен может быть методом или "Null"
                     var last = tokens[tokens.Length - 1];
+
                     if (last.Equals("Null", StringComparison.OrdinalIgnoreCase))
                     {
                         method = null;
@@ -212,8 +236,7 @@ namespace L3S4
                 list.Add(new Element(tree, name, method));
             }
 
-            elements = list;
-            ElementsUpdated?.Invoke(this, EventArgs.Empty);
+            SetElements(list);
         }
 
         public IReadOnlyList<Element> GetElements()
@@ -228,33 +251,47 @@ namespace L3S4
 
         public string GetMethodNameByIndex(int index)
         {
-            if (index < 0 || index >= elements.Count) return null;
+            if (index < 0 || index >= elements.Count)
+                return null;
+
             return elements[index].MethodName;
         }
 
         public string GetNameByIndex(int index)
         {
-            if (index < 0 || index >= elements.Count) return null;
+            if (index < 0 || index >= elements.Count)
+                return null;
+
             return elements[index].Name;
         }
 
         public int GetTreeNumberByIndex(int index)
         {
-            if (index < 0 || index >= elements.Count) return -1;
+            if (index < 0 || index >= elements.Count)
+                return -1;
+
             return elements[index].TreeNumber;
         }
 
-        // Попытка вызвать метод без параметров по имени через рефлексию.
-        // Если метод не найден — показывается окно.
         public void InvokeMethod(string methodName)
         {
             if (string.IsNullOrWhiteSpace(methodName))
             {
-                System.Windows.MessageBox.Show("Метод не задан", "Информация", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                WpfMessageBox.Show(
+                    "Метод не задан",
+                    "Информация",
+                    WpfMessageBoxButton.OK,
+                    WpfMessageBoxImage.Information);
                 return;
             }
 
-            var mi = this.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+            var mi = GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                Type.EmptyTypes,
+                null);
+
             if (mi != null)
             {
                 try
@@ -263,19 +300,30 @@ namespace L3S4
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show($"Ошибка при вызове метода {methodName}: {ex.Message}", "Ошибка", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    WpfMessageBox.Show(
+                        $"Ошибка при вызове метода {methodName}: {ex.Message}",
+                        "Ошибка",
+                        WpfMessageBoxButton.OK,
+                        WpfMessageBoxImage.Error);
                 }
 
                 return;
             }
 
-            System.Windows.MessageBox.Show($"Метод '{methodName}' не найден в App0", "Информация", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            WpfMessageBox.Show(
+                $"Метод '{methodName}' не найден в App0",
+                "Информация",
+                WpfMessageBoxButton.OK,
+                WpfMessageBoxImage.Information);
         }
 
-        // Пример тестового метода, который можно вызывать из menu.txt (без параметров)
         public void OpenDepartments()
         {
-            System.Windows.MessageBox.Show("Открыть: Отделы", "Действие", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            WpfMessageBox.Show(
+                "Открыть: Отделы",
+                "Действие",
+                WpfMessageBoxButton.OK,
+                WpfMessageBoxImage.Information);
         }
     }
 }
