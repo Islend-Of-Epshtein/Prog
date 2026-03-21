@@ -1,39 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace L3S4
 {
-    
     /// <summary>
     /// Вариант позднего связывания
     /// </summary>\
-    
     internal class App2 : App0
     {
-        Assembly assemblyMenuLibrary;
-        Assembly assemblyAuthLibrary;
-      
-        public App2() {
-            this.assemblyMenuLibrary = Assembly.LoadFrom("MenuLibrary.dll");
-            this.assemblyAuthLibrary = Assembly.LoadFrom("AuthLibrary.dll");
-            Type? AS = assemblyMenuLibrary.GetType("AuthService");
-            if (AS is not null)
+        private Type? menu, auth, menuItem;
+        private object? menuObj, authObj;
+        private IEnumerable result;
+        public App2(string menuPath, string usersPath) {
+            menu = Assembly.LoadFrom("MenuLibrary.dll").GetType("MenuLibrary.MenuModel");
+            auth = Assembly.LoadFrom("AuthLibrary.dll").GetType("AuthLibrary.AuthService");
+
+            this.menuObj = Activator.CreateInstance(menu, menuPath);
+            this.authObj = Activator.CreateInstance(auth, usersPath);
+
+            result = new List<object>();
+        }
+        public override bool CheckPassword(string Name, string Password) {
+            MethodInfo? LoginAuth = auth.GetMethod("Login");
+            MethodInfo? ApplyMenu = menu.GetMethod("ApplyPermissions");
+            MethodInfo? GetRootMenu = menu.GetMethod("GetRootMenu");
+
+            object? logincheck = LoginAuth?.Invoke(authObj, new string[] { Name, Password });
+            if (logincheck is not null)
             {
-                MethodInfo? constructAuth = AS.GetMethod("AuthService");
-                // вызываем метод, передаем ему значения для параметров и получаем результат
-                object? result = constructAuth?.Invoke(null, new string[] { "users.txt" });
+                ApplyMenu?.Invoke(menuObj,new object[] { logincheck });
+                object? RootMenu = GetRootMenu?.Invoke(menuObj, null);
+                result = RootMenu as IEnumerable;
+                ConvertMenuItemsAndAddToBase();
+                return true;
             }
-            Type? MM = assemblyMenuLibrary.GetType("MenuModel");
-            if (MM is not null)
+            else { return false; }
+        }
+        private void ConvertMenuItemsAndAddToBase() {
+            List<Element> elements = new List<Element>();
+            Assembly menuitems = Assembly.LoadFrom("MenuLibrary.dll");
+            menuItem = menuitems.GetType("MenuLibrary.MenuItem");
+
+            PropertyInfo? titleProp = menuItem.GetProperty("Title");
+            PropertyInfo? levelProp = menuItem.GetProperty("Level");
+            PropertyInfo? methodNameProp = menuItem.GetProperty("MethodName");
+            
+            foreach (var item in result)
             {
-                MethodInfo? constructAuth = MM.GetMethod("MenuModel");
-                // вызываем метод, передаем ему значения для параметров и получаем результат
-                object? result = constructAuth?.Invoke(null, new string[] { "menu.txt" });
+                int Level = (int)levelProp.GetValue(item);
+                string Name = titleProp.GetValue(item) as string ?? string.Empty;
+                string MethodName = methodNameProp.GetValue(item) as string ?? string.Empty;
+                Element element = new Element(Level, Name, MethodName);
+                elements.Add(element);
             }
+            
+            base.elements = elements;
         }
     }
 }

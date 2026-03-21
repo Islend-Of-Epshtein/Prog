@@ -14,7 +14,7 @@ namespace L3S4
             string menuPath = Path.Combine(basePath, "menu.txt");
             string usersPath = Path.Combine(basePath, "users.txt");
 
-            new App1(menuPath, usersPath);
+            new App2(menuPath, usersPath);
         }
     }
 }

@@ -22,20 +22,16 @@ namespace L3S4
             this.menuModel = new MenuModel(menuPath);
             this.menuItems = new List<MenuItem>();  
         }
-
         public override bool CheckPassword(string Name, string Password)
         {
             Dictionary<string, int> notAveable = authLibrary.Login(Name, Password);
             if (notAveable != null) {
-                
-
                 menuModel.ApplyPermissions(notAveable);
                 menuItems =  menuModel.GetRootMenu();
                 ConvertMenuItemsAndAddToBase();
                 return true;  
             }
             else { return false; }    
-            
         }
         private void ConvertMenuItemsAndAddToBase()
         {
