@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "tDIlgjNv/z4=",
+  "dgSpecHash": "SvH6tyBzSVA=",
   "success": true,
-  "projectFilePath": "E:\\gi\\L3S4-Net8\\L3S4-Net8.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\U-ber\\Репозитории\\Prog\\L3S4-Net8\\L3S4-Net8.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\U-ber\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.21\\microsoft.windowsdesktop.app.ref.8.0.21.nupkg.sha512",
+    "C:\\Users\\U-ber\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.21\\microsoft.netcore.app.ref.8.0.21.nupkg.sha512",
+    "C:\\Users\\U-ber\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.21\\microsoft.aspnetcore.app.ref.8.0.21.nupkg.sha512",
+    "C:\\Users\\U-ber\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.21\\microsoft.netcore.app.host.win-x64.8.0.21.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -20,6 +20,7 @@ namespace L3S4
         { 
             this.authLibrary = new AuthService(usersPath);
             this.menuModel = new MenuModel(menuPath);
+            this.menuItems = new List<MenuItem>();  
         }
 
         public override bool CheckPassword(string Name, string Password)

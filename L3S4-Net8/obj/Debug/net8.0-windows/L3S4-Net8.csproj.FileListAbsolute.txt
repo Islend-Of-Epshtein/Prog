@@ -59,3 +59,6 @@ E:\gi\L3S4-Net8\obj\Debug\net8.0-windows\MenuFrame.g.cs
 E:\gi\L3S4-Net8\obj\Debug\net8.0-windows\L3S4-Net8_Content.g.cs
 E:\gi\L3S4-Net8\bin\Debug\net8.0-windows\menu.txt
 E:\gi\L3S4-Net8\bin\Debug\net8.0-windows\users.txt
+C:\Users\U-ber\Репозитории\Prog\L3S4-Net8\bin\Debug\net8.0-windows\menu.txt
+C:\Users\U-ber\Репозитории\Prog\L3S4-Net8\bin\Debug\net8.0-windows\users.txt
+C:\Users\U-ber\Репозитории\Prog\L3S4-Net8\obj\Debug\net8.0-windows\L3S4-Net8_Content.g.cs

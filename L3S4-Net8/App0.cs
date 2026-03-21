@@ -141,7 +141,10 @@ namespace L3S4
         {
             LogInFrame logInFrame = new LogInFrame(this);
         }
-        public virtual bool CheckPassword(string Name, string Password) { return false; }
+        public virtual bool CheckPassword(string Name, string Password)
+        {
+            throw new Exception("Вызван базовый метод CheckPasword. Dll не загружен.");
+        }
         public string Version
         {
             get {
@@ -157,7 +160,7 @@ namespace L3S4
             }
         }
 
-        // --- Новые методы для работы с elements ---
+        // Новые методы для работы с elements
 
         // Загружает menu.txt по пути. Поддерживает строки:
         // <treeNumber> <name...> <methodName|Null>
