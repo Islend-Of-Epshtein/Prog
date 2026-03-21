@@ -43,7 +43,8 @@ namespace L3S4
             int index = 0;
             while (index < all.Count)
             {
-                if (all[index].TreeNumber != 0)
+                // Пропускаем элементы, у которых TreeNumber != 0 или Access == 2
+                if (all[index].TreeNumber != 0 || all[index].Access == 2)
                 {
                     index++;
                     continue;
@@ -62,7 +63,8 @@ namespace L3S4
             var item = new MenuItem
             {
                 Header = current.Name,
-                Tag = current
+                Tag = current,
+                IsEnabled = current.Access != 1  // Если Access == 1, пункт недоступен
             };
 
             index++;
@@ -70,6 +72,18 @@ namespace L3S4
             while (index < nodes.Count)
             {
                 int nextLevel = nodes[index].TreeNumber;
+                // Если следующий элемент имеет Access == 2, его и всех его потомков пропускаем
+                if (nodes[index].Access == 2)
+                {
+                    // Пропускаем этот элемент и все элементы на его уровне и выше, пока не встретим нужный уровень
+                    int skipLevel = nodes[index].TreeNumber;
+                    while (index < nodes.Count && nodes[index].TreeNumber > skipLevel)
+                    {
+                        index++;
+                    }
+                    continue;
+                }
+
                 if (nextLevel <= currentLevel)
                     break;
 
@@ -84,14 +98,27 @@ namespace L3S4
                 }
             }
 
+            // Если после добавления детей элемент всё ещё пуст и он недоступен (IsEnabled = false), его можно не показывать
+            if (item.Items.Count == 0 && !item.IsEnabled)
+            {
+                // Такие элементы не добавляем вообще (например, родитель с Access=1 и без детей)
+                // В текущей реализации мы всё равно возвращаем item, но он будет добавлен в родительский Items.
+                // Если нужно полностью скрыть такие пункты, нужно дополнительно проверять в BuildMenuFromElements.
+                // Оставляем как есть, пусть будет серый недоступный пункт.
+            }
+
             if (item.Items.Count == 0)
             {
                 item.Click += (sender, e) =>
                 {
                     HeaderText.Text = $"Выбран пункт: {current.Name}";
-                    if (!string.IsNullOrWhiteSpace(current.MethodName))
+                    if (!string.IsNullOrWhiteSpace(current.MethodName) && current.Access == 0)
                     {
                         _app.InvokeMethod(current.MethodName);
+                    }
+                    else if (current.Access == 1)
+                    {
+                        HeaderText.Text = $"Пункт '{current.Name}' недоступен.";
                     }
                 };
             }
