@@ -1,12 +1,25 @@
-﻿#nullable enable
-namespace L3S4;
+﻿using System;
 
-public class Element(int treeNumber, string name, string? methodName = null, int access = 0)
+namespace L3S4
 {
-    public int TreeNumber { get; } = treeNumber;
-    public string Name { get; } = name ?? string.Empty;
-    public string? MethodName { get; } = string.IsNullOrWhiteSpace(methodName) || methodName == "Null" ? null : methodName;
-    public int Access { get; } = access;
+    public class Element
+    {
+        public int TreeNumber { get; }
+        public string Name { get; }
+        public string MethodName { get; }
+        public int Access { get; }
+        public Element(int treeNumber, string name,int access=0,  string methodName = "")
+        {
+            TreeNumber = treeNumber;
+            Name = name ?? string.Empty;
+            Access = access;
+            MethodName = methodName;
+                        
+        }
 
-    public override string ToString() => $"{TreeNumber} {Name} {MethodName} (Access: {Access})";
-}
+        public override string ToString()
+        {
+            return $"{TreeNumber} {Name} {Access} {MethodName}";
+        }
+    }
+}   

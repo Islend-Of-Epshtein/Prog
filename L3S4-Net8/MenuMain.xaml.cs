@@ -1,123 +1,104 @@
-﻿using L3S4;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace L3S4;
+using WpfButton = System.Windows.Controls.Button;
+using WpfWrapPanel = System.Windows.Controls.WrapPanel;
+using WpfMessageBox = System.Windows.MessageBox;
+using WpfMessageBoxButton = System.Windows.MessageBoxButton;
+using WpfMessageBoxImage = System.Windows.MessageBoxImage;
+using WpfHorizontalAlignment = System.Windows.HorizontalAlignment;
 
-public partial class MenuMain : Window
+namespace L3S4
 {
-    private static readonly Type[] EmptyTypes = Type.EmptyTypes;
-    private readonly App0 _app;
-
-    public MenuMain(App0 app)
+    public partial class MenuMain : Window
     {
-        _app = app;
-        InitializeComponent();
+        private readonly App0 _app;
 
-        Loaded += MenuMain_Loaded;
-        _app.ElementsUpdated += App_ElementsUpdated;
-    }
-
-    private void MenuMain_Loaded(object sender, RoutedEventArgs e) => BuildMenuFromElements();
-
-    private void App_ElementsUpdated(object? sender, EventArgs e) => BuildMenuFromElements();
-
-    protected override void OnClosed(EventArgs e)
-    {
-        _app.ElementsUpdated -= App_ElementsUpdated;
-        base.OnClosed(e);
-    }
-
-    private void BuildMenuFromElements()
-    {
-        MainMenu.Items.Clear();
-
-        List<Element> all = _app
-            .GetElements()
-            .Where(x => x.Access != 2)
-            .ToList();
-
-        if (all.Count == 0)
+        public MenuMain(App0 app)
         {
-            HeaderText.Text = "Нет доступных пунктов меню.";
-            return;
+            _app = app;
+            InitializeComponent();
+
+            Loaded += MenuMain_Loaded;
         }
 
-        int index = 0;
-        while (index < all.Count)
+        private void MenuMain_Loaded(object sender, RoutedEventArgs e)
         {
-            if (all[index].TreeNumber != 0)
+            BuildButtonsFromElements();
+        }
+
+        private void BuildButtonsFromElements()
+        {
+            ButtonsPanel.Children.Clear();
+            ItemsPanel.Children.Clear();
+
+            var roots = new List<string> { };
+
+            foreach (var root in roots)
             {
-                index++;
-                continue;
+                WpfButton button = new WpfButton
+                {
+                    
+                    Tag = root,
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(12, 6, 12, 6),
+                    MinWidth = 110
+                };
+
+                button.Click += RootButton_Click;
+                ButtonsPanel.Children.Add(button);
             }
 
-            MenuItem item = BuildMenuItemRecursive(all, ref index, 0);
-            MainMenu.Items.Add(item);
+            HeaderText.Text = roots.Count == 0
+                ? "Разделы меню не найдены в menu.txt"
+                : "Выбери раздел сверху";
         }
 
-        HeaderText.Text = "Выбери раздел меню";
-    }
-
-    private MenuItem BuildMenuItemRecursive(List<Element> all, ref int index, int currentLevel)
-    {
-        Element current = all[index];
-        var item = new MenuItem
+        private void RootButton_Click(object sender, RoutedEventArgs e)
         {
-            Header = current.Name,
-            Tag = current,
-            IsEnabled = current.Access == 0
-        };
-
-        index++;
-
-        if (current.Access != 0)
-        {
-            while (index < all.Count && all[index].TreeNumber > currentLevel)
-                index++;
-            return item;
-        }
-
-        while (index < all.Count)
-        {
-            int nextLevel = all[index].TreeNumber;
-            if (nextLevel <= currentLevel) break;
-
-            if (nextLevel == currentLevel + 1)
+            if (sender is not WpfButton button || button.Tag is not Element root)
             {
-                MenuItem child = BuildMenuItemRecursive(all, ref index, currentLevel + 1);
-                item.Items.Add(child);
+                return;
+            }
+
+            ItemsPanel.Children.Clear();
+
+            var all = new List<string> { };
+            int rootIndex = all.FindIndex(x => ReferenceEquals(x, root));
+
+            if (rootIndex < 0)
+            {
+                HeaderText.Text = $"Не удалось найти раздел: {root.Name}";
+                return;
+            }
+
+            int childCount = 0;
+
+            
+        }
+
+        private void ChildButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not WpfButton button || button.Tag is not Element child)
+            {
+                return;
+            }
+
+            HeaderText.Text = $"Выбран пункт: {child.Name}";
+
+            if (!string.IsNullOrWhiteSpace(child.MethodName))
+            {
+                
             }
             else
             {
-                index++;
+                WpfMessageBox.Show(
+                    $"Пункт: {child.Name}",
+                    "Информация",
+                    WpfMessageBoxButton.OK,
+                    WpfMessageBoxImage.Information);
             }
         }
-
-        if (item.Items.Count == 0)
-            item.Click += FinalItem_Click;
-
-        return item;
     }
-
-    private void FinalItem_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not MenuItem { Tag: Element element })
-            return;
-
-        HeaderText.Text = $"Выбран пункт: {element.Name}";
-
-        if (HasMethod(element.MethodName))
-            _app.InvokeMethod(element.MethodName);
-
-        e.Handled = true;
-    }
-
-    private bool HasMethod(string? methodName) =>
-        !string.IsNullOrWhiteSpace(methodName) &&
-        _app.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, EmptyTypes, null) != null;
 }
