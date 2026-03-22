@@ -2,8 +2,8 @@
 0 Сотрудники Stuff
 0 Приказы Orders
 0 Документы Docs
-0 Справочники 
-1 Отделы OpenDepartments
+0 Справочники
+1 Отделы Departs
 1 Города Towns
 1 Должности Posts
 0 Окно Window

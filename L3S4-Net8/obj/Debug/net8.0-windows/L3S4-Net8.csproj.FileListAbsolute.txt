@@ -8,9 +8,7 @@ E:\gi\Prog\L3S4-Net8\bin\Debug\net8.0-windows\L3S4-Net8.pdb
 E:\gi\Prog\L3S4-Net8\bin\Debug\net8.0-windows\AuthLibrary.dll
 E:\gi\Prog\L3S4-Net8\bin\Debug\net8.0-windows\MenuLibrary.dll
 E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\L3S4-Net8.csproj.AssemblyReference.cache
-E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\MenuFrame.baml
 E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\LogInFrame.g.cs
-E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\MenuFrame.g.cs
 E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\MenuMain.g.cs
 E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\App.g.cs
 E:\gi\Prog\L3S4-Net8\obj\Debug\net8.0-windows\L3S4-Net8_Content.g.cs

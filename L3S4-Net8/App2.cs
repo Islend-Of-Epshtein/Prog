@@ -1,66 +1,74 @@
-﻿using System.Collections;
+﻿using L3S4;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 
-namespace L3S4
+namespace L3S4;
+
+internal class App2 : App0
 {
-    internal class App2 : App0
+    private static readonly Type[] EmptyTypes = Type.EmptyTypes;
+
+    private readonly Type? menu;
+    private readonly Type? auth;
+    private readonly object? menuObj;
+    private readonly object? authObj;
+    private IEnumerable result = new List<object>();
+
+    public App2(string menuPath, string usersPath)
     {
-        private Type? menu, auth, menuItem;
-        private object? menuObj, authObj;
-        private IEnumerable result;
+        menu = Assembly.LoadFrom("MenuLibrary.dll").GetType("MenuLibrary.MenuModel");
+        auth = Assembly.LoadFrom("AuthLibrary.dll").GetType("AuthLibrary.AuthService");
 
-        public App2(string menuPath, string usersPath)
-        {
-            menu = Assembly.LoadFrom("MenuLibrary.dll").GetType("MenuLibrary.MenuModel");
-            auth = Assembly.LoadFrom("AuthLibrary.dll").GetType("AuthLibrary.AuthService");
+        if (menu == null || auth == null)
+            throw new InvalidOperationException("Не удалось загрузить типы из сборок.");
 
-            menuObj = Activator.CreateInstance(menu, menuPath);
-            authObj = Activator.CreateInstance(auth, usersPath);
+        menuObj = Activator.CreateInstance(menu, menuPath);
+        authObj = Activator.CreateInstance(auth, usersPath);
+    }
 
-            result = new List<object>();
-        }
+    public override bool CheckPassword(string Name, string Password)
+    {
+        MethodInfo? loginAuth = auth?.GetMethod("Login");
+        MethodInfo? applyMenu = menu?.GetMethod("ApplyPermissions");
+        MethodInfo? getRootMenu = menu?.GetMethod("GetRootMenu");
 
-        public override bool CheckPassword(string Name, string Password)
-        {
-            MethodInfo? LoginAuth = auth.GetMethod("Login");
-            MethodInfo? ApplyMenu = menu.GetMethod("ApplyPermissions");
-            MethodInfo? GetRootMenu = menu.GetMethod("GetRootMenu");
-
-            object? logincheck = LoginAuth?.Invoke(authObj, new string[] { Name, Password });
-            if (logincheck is not null)
-            {
-                ApplyMenu?.Invoke(menuObj, new object[] { logincheck });
-                object? RootMenu = GetRootMenu?.Invoke(menuObj, null);
-                result = RootMenu as IEnumerable;
-                ConvertMenuItemsAndAddToBase();
-                return true;
-            }
-
+        if (loginAuth == null || applyMenu == null || getRootMenu == null)
             return false;
-        }
 
-        private void ConvertMenuItemsAndAddToBase()
+        object? loginCheck = loginAuth.Invoke(authObj, new[] { Name, Password });
+        if (loginCheck != null)
         {
-            List<Element> elements = new List<Element>();
-            Assembly menuitems = Assembly.LoadFrom("MenuLibrary.dll");
-            menuItem = menuitems.GetType("MenuLibrary.MenuItem");
-
-            PropertyInfo? titleProp = menuItem.GetProperty("Title");
-            PropertyInfo? levelProp = menuItem.GetProperty("Level");
-            PropertyInfo? methodNameProp = menuItem.GetProperty("MethodName");
-
-            foreach (var item in result)
-            {
-                int Level = (int)levelProp.GetValue(item);
-                string Name = titleProp.GetValue(item) as string ?? string.Empty;
-                string MethodName = methodNameProp.GetValue(item) as string ?? string.Empty;
-
-                Element element = new Element(Level, Name, MethodName);
-                elements.Add(element);
-            }
-
-            SetElements(elements);
+            applyMenu.Invoke(menuObj, new[] { loginCheck });
+            object? rootMenu = getRootMenu.Invoke(menuObj, null);
+            result = rootMenu as IEnumerable ?? new List<object>();
+            ConvertMenuItemsAndAddToBase();
+            return true;
         }
+
+        return false;
+    }
+
+    private void ConvertMenuItemsAndAddToBase()
+    {
+        var elements = new List<Element>();
+        var menuItemType = Assembly.LoadFrom("MenuLibrary.dll").GetType("MenuLibrary.MenuItem");
+        if (menuItemType == null) return;
+
+        var titleProp = menuItemType.GetProperty("Title");
+        var levelProp = menuItemType.GetProperty("Level");
+        var methodNameProp = menuItemType.GetProperty("MethodName");
+
+        foreach (var item in result)
+        {
+            int level = (int)(levelProp?.GetValue(item) ?? 0);
+            string name = titleProp?.GetValue(item) as string ?? "";
+            string methodName = methodNameProp?.GetValue(item) as string ?? "";
+
+            elements.Add(new Element(level, name, methodName));
+        }
+
+        SetElements(elements);
     }
 }

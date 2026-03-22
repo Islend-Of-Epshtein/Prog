@@ -10,15 +10,15 @@
         Width="800"
         WindowStartupLocation="CenterScreen">
 
-    <Grid Background="#95d9ed">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
-                Background="#f7f48b"
-                BorderBrush="#C8C55E"
+                Background="White"
+                BorderBrush="#CCCCCC"
                 BorderThickness="0,0,0,1"
                 Padding="0">
             <Menu x:Name="MainMenu"

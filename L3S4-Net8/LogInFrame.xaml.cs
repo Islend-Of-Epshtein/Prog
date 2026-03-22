@@ -3,7 +3,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Effects;
-
 using WpfBrushes = System.Windows.Media.Brushes;
 using WpfColor = System.Windows.Media.Color;
 using WpfColorConverter = System.Windows.Media.ColorConverter;
@@ -18,12 +17,12 @@ namespace L3S4
         private readonly App0 obj;
         private bool _isUpdatingPassword;
 
-        public LogInFrame(object obj)
+        public LogInFrame(App0 app)
         {
-            this.obj = (App0)obj;
-            DataContext = obj;
+            obj = app ?? throw new ArgumentNullException(nameof(app));
+            DataContext = app;
             InitializeComponent();
-            Visibility = Visibility.Visible;
+            Visibility = System.Windows.Visibility.Visible;
             Show();
         }
 
@@ -34,7 +33,7 @@ namespace L3S4
 
             if (obj.CheckPassword(login, password))
             {
-                MenuMain menuMain = new MenuMain(obj);
+                MenuMain menuMain = new(obj);
                 menuMain.Show();
                 Close();
             }
@@ -52,13 +51,9 @@ namespace L3S4
 
             string currentText = FieldPaswword.Text;
             if (currentText.Length > _password.Length)
-            {
                 _password += currentText[^1];
-            }
             else if (currentText.Length < _password.Length && _password.Length > 0)
-            {
                 _password = _password[..currentText.Length];
-            }
 
             FieldPaswword.Text = new string('*', _password.Length);
             FieldPaswword.SelectionStart = FieldPaswword.Text.Length;
@@ -72,7 +67,7 @@ namespace L3S4
 
         public static void ShowErrorToast(string message, int duration = 3000)
         {
-            Window toast = new Window
+            Window toast = new()
             {
                 Width = 350,
                 Height = 80,
@@ -84,7 +79,7 @@ namespace L3S4
                 ShowInTaskbar = false
             };
 
-            Border border = new Border
+            Border border = new()
             {
                 Background = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#FEE2E2")!),
                 BorderBrush = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#FECACA")!),
@@ -94,11 +89,11 @@ namespace L3S4
                 Effect = new DropShadowEffect { BlurRadius = 15, ShadowDepth = 2, Opacity = 0.3 }
             };
 
-            Grid grid = new Grid { Margin = new Thickness(15) };
+            Grid grid = new() { Margin = new Thickness(15) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            TextBlock icon = new TextBlock
+            TextBlock icon = new()
             {
                 Text = "⚠️",
                 FontSize = 24,
@@ -108,7 +103,7 @@ namespace L3S4
             };
             Grid.SetColumn(icon, 0);
 
-            TextBlock textBlock = new TextBlock
+            TextBlock textBlock = new()
             {
                 Text = message,
                 Foreground = new WpfSolidColorBrush((WpfColor)WpfColorConverter.ConvertFromString("#991B1B")!),
@@ -126,11 +121,8 @@ namespace L3S4
 
             toast.Loaded += (s, e) =>
             {
-                System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(duration)
-                };
-                timer.Tick += (sender, args) =>
+                var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(duration) };
+                timer.Tick += (_, _) =>
                 {
                     timer.Stop();
                     toast.Close();
@@ -142,4 +134,3 @@ namespace L3S4
         }
     }
 }
-#nullable restore

@@ -1,27 +1,41 @@
-﻿using System;
+﻿using AuthLibrary;
+using L3S4;
+using MenuLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace L3S4
+namespace L3S4;
+
+internal class App1 : App0
 {
-    internal class App1 : App0
+    private readonly AuthService authLibrary;
+    private readonly string menuPath;
+
+    public App1(string menuPath, string usersPath) : base()
     {
-        private readonly string _menuPath;
+        this.menuPath = menuPath;
+        authLibrary = new AuthService(usersPath);
+    }
 
-        public App1(string menuPath, string usersPath)
-        {
-            _menuPath = menuPath;
-            // AuthService и MenuModel не используются, но остаются для совместимости
-            // При желании их можно удалить, если не нужны
-        }
+    public override bool CheckPassword(string Name, string Password)
+    {
+        Dictionary<string, int>? permissions = authLibrary.Login(Name, Password);
+        if (permissions == null)
+            return false;
 
-        public override bool CheckPassword(string Name, string Password)
+        // Загружаем меню из файла
+        LoadMenuFile(menuPath);
+
+        // Применяем права к загруженным элементам
+        var elementsWithAccess = new List<Element>();
+        foreach (var element in elements)
         {
-            // Для упрощения проверка пароля опущена – пропускаем любого пользователя
-            // Если нужна проверка, её можно реализовать здесь или оставить вызов библиотеки
-            // В данном случае просто загружаем меню из файла
-            LoadMenuFile(_menuPath);
-            return true;
+            int access = permissions.TryGetValue(element.Name, out int userAccess) ? userAccess : 0;
+            elementsWithAccess.Add(new Element(element.TreeNumber, element.Name, element.MethodName, access));
         }
+        SetElements(elementsWithAccess);
+
+        return true;
     }
 }
