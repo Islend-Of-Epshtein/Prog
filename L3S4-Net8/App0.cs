@@ -143,7 +143,7 @@ namespace L3S4
         }
         public virtual bool CheckPassword(string Name, string Password)
         {
-            throw new Exception("Вызван базовый метод CheckPasword. Dll не загружен.");
+            return false;
         }
         public string Version
         {
@@ -158,118 +158,6 @@ namespace L3S4
                     OnPropertyChanged(nameof(Version));
                 }
             }
-        }
-
-        // Новые методы для работы с elements
-
-        // Загружает menu.txt по пути. Поддерживает строки:
-        // <treeNumber> <name...> <methodName|Null>
-        // Игнорирует пустые строки и строки, начинающиеся с '#' или '//'
-        public void LoadMenuFile(string path)
-        {
-            if (!File.Exists(path))
-                throw new FileNotFoundException("menu file not found", path);
-
-            var list = new List<Element>();
-            foreach (var raw in File.ReadAllLines(path))
-            {
-                if (string.IsNullOrWhiteSpace(raw)) continue;
-                var line = raw.Trim();
-                if (line.StartsWith("#") || line.StartsWith("//")) continue;
-
-                var tokens = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length < 2) continue;
-
-                if (!int.TryParse(tokens[0], out int tree))
-                {
-                    // если первая токен не число — пропустить
-                    continue;
-                }
-
-                string method = null;
-                string name;
-
-                if (tokens.Length == 2)
-                {
-                    name = tokens[1];
-                }
-                else
-                {
-                    // последний токен может быть методом или "Null"
-                    var last = tokens[tokens.Length - 1];
-                    if (last.Equals("Null", StringComparison.OrdinalIgnoreCase))
-                    {
-                        method = null;
-                        name = string.Join(" ", tokens.Skip(1));
-                    }
-                    else
-                    {
-                        method = last;
-                        name = string.Join(" ", tokens.Skip(1).Take(tokens.Length - 2));
-                    }
-                }
-
-                list.Add(new Element(tree, name, method));
-            }
-
-            elements = list;
-            ElementsUpdated?.Invoke(this, EventArgs.Empty);
-        }
-
-        public IReadOnlyList<Element> GetElements()
-        {
-            return elements.AsReadOnly();
-        }
-
-        public int GetCountInHierarchy(int treeNumber)
-        {
-            return elements.Count(e => e.TreeNumber == treeNumber);
-        }
-
-        public string GetMethodNameByIndex(int index)
-        {
-            if (index < 0 || index >= elements.Count) return null;
-            return elements[index].MethodName;
-        }
-
-        public string GetNameByIndex(int index)
-        {
-            if (index < 0 || index >= elements.Count) return null;
-            return elements[index].Name;
-        }
-
-        public int GetTreeNumberByIndex(int index)
-        {
-            if (index < 0 || index >= elements.Count) return -1;
-            return elements[index].TreeNumber;
-        }
-
-        // Попытка вызвать метод без параметров по имени через рефлексию.
-        // Если метод не найден — показывается окно.
-        public void InvokeMethod(string methodName)
-        {
-            if (string.IsNullOrWhiteSpace(methodName))
-            {
-                System.Windows.MessageBox.Show("Метод не задан", "Информация", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-                return;
-            }
-
-            var mi = this.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-            if (mi != null)
-            {
-                try
-                {
-                    mi.Invoke(this, null);
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show($"Ошибка при вызове метода {methodName}: {ex.Message}", "Ошибка", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                }
-
-                return;
-            }
-
-            System.Windows.MessageBox.Show($"Метод '{methodName}' не найден в App0", "Информация", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
 
         // Пример тестового метода, который можно вызывать из menu.txt (без параметров)

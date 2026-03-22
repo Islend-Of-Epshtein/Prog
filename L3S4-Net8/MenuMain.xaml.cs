@@ -33,15 +33,13 @@ namespace L3S4
             ButtonsPanel.Children.Clear();
             ItemsPanel.Children.Clear();
 
-            var roots = _app.GetElements()
-                .Where(x => x.TreeNumber == 0)
-                .ToList();
+            var roots = new List<string> { };
 
             foreach (var root in roots)
             {
                 WpfButton button = new WpfButton
                 {
-                    Content = root.Name,
+                    
                     Tag = root,
                     Margin = new Thickness(5),
                     Padding = new Thickness(12, 6, 12, 6),
@@ -66,7 +64,7 @@ namespace L3S4
 
             ItemsPanel.Children.Clear();
 
-            var all = _app.GetElements().ToList();
+            var all = new List<string> { };
             int rootIndex = all.FindIndex(x => ReferenceEquals(x, root));
 
             if (rootIndex < 0)
@@ -77,36 +75,7 @@ namespace L3S4
 
             int childCount = 0;
 
-            for (int i = rootIndex + 1; i < all.Count; i++)
-            {
-                if (all[i].TreeNumber == 0)
-                {
-                    break;
-                }
-
-                if (all[i].TreeNumber == 1)
-                {
-                    Element child = all[i];
-
-                    WpfButton childButton = new WpfButton
-                    {
-                        Content = child.Name,
-                        Tag = child,
-                        Margin = new Thickness(4),
-                        Padding = new Thickness(10, 6, 10, 6),
-                        HorizontalContentAlignment = WpfHorizontalAlignment.Left,
-                        MinWidth = 120
-                    };
-
-                    childButton.Click += ChildButton_Click;
-                    ItemsPanel.Children.Add(childButton);
-                    childCount++;
-                }
-            }
-
-            HeaderText.Text = childCount == 0
-                ? $"Раздел: {root.Name}. Подпунктов пока нет."
-                : $"Раздел: {root.Name}. Выбери подпункт.";
+            
         }
 
         private void ChildButton_Click(object sender, RoutedEventArgs e)
@@ -120,7 +89,7 @@ namespace L3S4
 
             if (!string.IsNullOrWhiteSpace(child.MethodName))
             {
-                _app.InvokeMethod(child.MethodName);
+                
             }
             else
             {

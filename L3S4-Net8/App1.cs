@@ -1,7 +1,6 @@
 ﻿
-using System.Collections.Generic;
 
-//Раннее связывание.
+//Раннее связывание. - если нету, то даже не запустится
 
 using AuthLibrary;
 using MenuLibrary;
@@ -27,21 +26,25 @@ namespace L3S4
             Dictionary<string, int> notAveable = authLibrary.Login(Name, Password);
             if (notAveable != null) {
                 menuModel.ApplyPermissions(notAveable);
-                menuItems =  menuModel.GetRootMenu();
-                ConvertMenuItemsAndAddToBase();
+                menuItems = menuModel.GetRootMenu();
+                List<Element> elements = new List<Element>();
+                ConvertMenuItemsAndAddToBase(elements, menuItems);
+                base.elements = elements;
                 return true;  
             }
             else { return false; }    
         }
-        private void ConvertMenuItemsAndAddToBase()
+        private void ConvertMenuItemsAndAddToBase(List<Element> elements, List<MenuItem> items)
         {
-            List<Element> elements = new List<Element>();
-            foreach (var item in menuItems)
+            foreach (var item in items)
             {
-                Element element = new Element(item.Level, item.Title, item.MethodName);
+                Element element = new Element(item.Level, item.Title,item.Status, item.MethodName);
                 elements.Add(element);
+                if (item.Children!=null) 
+                {
+                    ConvertMenuItemsAndAddToBase(elements, item.Children);
+                }
             }
-            base.elements = elements;
         }
     }
 }

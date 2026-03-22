@@ -7,19 +7,19 @@ namespace L3S4
         public int TreeNumber { get; }
         public string Name { get; }
         public string MethodName { get; }
-
-        public Element(int treeNumber, string name, string methodName = null)
+        public int Access { get; }
+        public Element(int treeNumber, string name,int access=0,  string methodName = "")
         {
             TreeNumber = treeNumber;
             Name = name ?? string.Empty;
-            MethodName = string.IsNullOrWhiteSpace(methodName) || methodName.Equals("Null", StringComparison.OrdinalIgnoreCase)
-                ? null
-                : methodName;
+            Access = access;
+            MethodName = methodName;
+                        
         }
 
         public override string ToString()
         {
-            return $"{TreeNumber} {Name} {MethodName}";
+            return $"{TreeNumber} {Name} {Access} {MethodName}";
         }
     }
 }   
