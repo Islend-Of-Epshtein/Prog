@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\gi\\Prog\\L3S4-Net8\\L3S4-Net8.csproj",
+      "projectUniqueName": "D:\\program\\vetv\\L3S4-Net8\\L3S4-Net8.csproj",
       "projectName": "L3S4-Net8",
-      "projectPath": "E:\\gi\\Prog\\L3S4-Net8\\L3S4-Net8.csproj",
+      "projectPath": "D:\\program\\vetv\\L3S4-Net8\\L3S4-Net8.csproj",
       "packagesPath": "C:\\Users\\Тимофей\\.nuget\\packages\\",
-      "outputPath": "E:\\gi\\Prog\\L3S4-Net8\\obj\\",
+      "outputPath": "D:\\program\\vetv\\L3S4-Net8\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Тимофей\\AppData\\Roaming\\NuGet\\NuGet.Config",

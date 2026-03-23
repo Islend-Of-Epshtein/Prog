@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("L3S4-Net8")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+240792c16bcc1a8c5ea8269c40270ea77e338f0e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7223e7f26913b9610486062cef8dc787459d8eed")]
 [assembly: System.Reflection.AssemblyProductAttribute("L3S4-Net8")]
 [assembly: System.Reflection.AssemblyTitleAttribute("L3S4-Net8")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
