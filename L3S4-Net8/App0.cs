@@ -1,5 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace L3S4
@@ -16,28 +21,24 @@ namespace L3S4
 
         public event EventHandler ElementsUpdated;
 
-        public string CapsLookGet
-        {
-            get
-            {
-                return this._capsLook ? "Нажата" : "Не нажата";
-            }
-        }
+        public string CapsLookGet => _capsLook ? "Нажата" : "Не нажата";
+
         public bool CapsLookSet
         {
             set
             {
-                this._capsLook = value;
+                _capsLook = value;
                 OnPropertyChanged(nameof(CapsLookGet));
                 OnPropertyChanged(nameof(CapsLookSet));
             }
         }
+
         public string SelectLanguage
         {
-            get { return this._language; }
+            get => _language;
             set
             {
-                this._language = value;
+                _language = value;
                 OnPropertyChanged(nameof(SelectLanguage));
             }
         }
@@ -47,20 +48,22 @@ namespace L3S4
             elements = new List<Element>();
             Init();
         }
+
         public App0(string version)
         {
-            Version = version;
+            _version = version;
             elements = new List<Element>();
             Init();
         }
-        private void Init() {
+
+        private void Init()
+        {
             _selectLanguage = InputLanguage.CurrentInputLanguage;
             SelectLanguage = GetDisplayLanguageName(_selectLanguage);
-
             InitializeTimer(100);
-
             InitLogInFrame();
         }
+
         private void InitializeTimer(int updateTime)
         {
             _timer = new DispatcherTimer();
@@ -73,30 +76,24 @@ namespace L3S4
         {
             bool currentCapsLock = IsCapsLockOn();
             if (currentCapsLock != _capsLook)
-            {
                 CapsLookSet = currentCapsLock;
-            }
 
             InputLanguage currentLanguage = InputLanguage.CurrentInputLanguage;
             if (!currentLanguage.Equals(_selectLanguage))
             {
                 _selectLanguage = currentLanguage;
                 SelectLanguage = GetDisplayLanguageName(currentLanguage);
-
                 OnPropertyChanged(nameof(SelectLanguage));
             }
         }
 
         private string GetDisplayLanguageName(InputLanguage language)
         {
-            string cultureName = language.Culture.EnglishName;
-
             switch (language.LayoutName)
             {
                 case "Русская":
                 case "Russian":
                     return "Русский";
-
                 case "США":
                 case "US":
                 case "English":
@@ -107,18 +104,13 @@ namespace L3S4
             }
         }
 
-        private bool IsCapsLockOn()
-        {
-            return Control.IsKeyLocked(Keys.CapsLock);
-        }
+        private bool IsCapsLockOn() => Control.IsKeyLocked(Keys.CapsLock);
 
         public void RefreshKeyboardState()
         {
             bool currentCapsLock = IsCapsLockOn();
             if (currentCapsLock != _capsLook)
-            {
                 CapsLookSet = currentCapsLock;
-            }
 
             InputLanguage currentLanguage = InputLanguage.CurrentInputLanguage;
             if (!currentLanguage.Equals(_selectLanguage))
@@ -137,33 +129,56 @@ namespace L3S4
                 _timer = null;
             }
         }
+
         private void InitLogInFrame()
         {
-            LogInFrame logInFrame = new LogInFrame(this);
+            _ = new LogInFrame(this);
         }
-        public virtual bool CheckPassword(string Name, string Password)
+
+        public virtual bool CheckPassword(string Name, string Password) => false;
+
+        public string Version => "Версия " + _version;
+
+        // --- Новые методы для работы с элементами меню ---
+        public IReadOnlyList<Element> GetElements() => elements.AsReadOnly();
+
+        public void SetElements(IEnumerable<Element> newElements)
         {
-            return false;
+            elements = newElements?.ToList() ?? new List<Element>();
+            ElementsUpdated?.Invoke(this, EventArgs.Empty);
         }
-        public string Version
+
+        public void InvokeMethod(string methodName)
         {
-            get {
-                return "Версия "+ _version;
-            }
-            set
+            if (string.IsNullOrWhiteSpace(methodName))
             {
-                if (_version != value)
+                System.Windows.MessageBox.Show("Метод не задан", "Информация",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
+
+            var mi = GetType().GetMethod(methodName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null, Type.EmptyTypes, null);
+            if (mi != null)
+            {
+                try
                 {
-                    _version = value;
-                    OnPropertyChanged(nameof(Version));
+                    mi.Invoke(this, null);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Ошибка при вызове метода {methodName}: {ex.Message}",
+                        "Ошибка", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 }
             }
         }
 
-        // Пример тестового метода, который можно вызывать из menu.txt (без параметров)
+        // Пример тестового метода
         public void OpenDepartments()
         {
-            System.Windows.MessageBox.Show("Открыть: Отделы", "Действие", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Открыть: Отделы", "Действие",
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
     }
 }
