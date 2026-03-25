@@ -17,11 +17,11 @@
             <RowDefinition Height="2"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        
+
+
         <Rectangle Grid.RowSpan="7" Fill="#B9D1EA"/>
-        
-        
+
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"></ColumnDefinition>
@@ -34,7 +34,7 @@
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                
+
                 <Border Grid.Row="0" Margin="3,4,2,1" Background="#FFFACD">
                 </Border>
 
@@ -77,27 +77,27 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock Grid.Column="0" Text="Имя пользователя" VerticalAlignment="Center" 
                         HorizontalAlignment="Left" FontSize="16" Margin="8"/>
 
-            <TextBox x:Name="FieldName" Margin="10,20,10,20" Grid.Column="1" Background="White" 
+            <TextBox x:Name="FieldName" Margin="10,0,5,0" Grid.Column="1" Background="White" 
                      BorderBrush="Black" 
-                     Text="V" HorizontalAlignment="Stretch" 
-                 VerticalAlignment="Center" BorderThickness="1" TextChanged="FieldName_TextChanged" />
+                     Text="V" 
+                 VerticalAlignment="Center" BorderThickness="1" TextChanged="FieldName_TextChanged" Height="21" />
         </Grid>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-        
+
             <TextBlock  Grid.Column="0" Text="Пароль" VerticalAlignment="Center" 
                         HorizontalAlignment="Stretch" FontSize="16" Margin="8"/>
 
-            <TextBox x:Name="FieldPaswword" Margin="10,20,10,20" Grid.Column="1" Background="White" 
-                        BorderBrush="Black" Text="123" HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center" BorderThickness="1" TextChanged="FieldPaswword_TextChanged"/>
+            <TextBox x:Name="FieldPaswword" Margin="10,0,10,0" Grid.Column="1" Background="White" 
+                        BorderBrush="Black" Text="V"
+                        VerticalAlignment="Center" BorderThickness="1" TextChanged="FieldPaswword_TextChanged" Height="22"/>
         </Grid>
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>

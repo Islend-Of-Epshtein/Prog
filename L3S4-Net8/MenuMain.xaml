@@ -13,7 +13,7 @@
             <Menu x:Name="MainMenu" Background="Transparent"/>
         </Border>
 
-        <Border Grid.Row="1" Margin="12" Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+        <Border Grid.Row="1" Margin="12" Background="White" BorderBrush="White" BorderThickness="1"
                 CornerRadius="6" Padding="12">
             <TextBlock x:Name="HeaderText" Text="Выбери пункт меню" FontSize="18" FontWeight="SemiBold"/>
         </Border>
