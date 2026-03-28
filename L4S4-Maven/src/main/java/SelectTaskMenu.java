@@ -23,7 +23,6 @@ public class SelectTaskMenu extends JFrame {
         frame.setSize(400,80);
         frame.setLocationRelativeTo(null);
         frame.setBackground(Color.GRAY);
-
         JPanel panel = new JPanel(new GridLayout(1, 3, 1, 0)); // 1 строка, 3 колонки
         JButton button1 = CreateButton("Task №1");
         JButton button2 = CreateButton("Task №2");
