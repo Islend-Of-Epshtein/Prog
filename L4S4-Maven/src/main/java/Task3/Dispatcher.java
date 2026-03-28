@@ -167,8 +167,7 @@ public class Dispatcher extends Client {
             receiverThread.interrupt();
         }
     }
-
-    public static void main(String[] args) {
+    public static void run(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
                 new Dispatcher("localhost", 12345);

@@ -16,4 +16,7 @@ public class InputAdressFrame {
         panel.add(label, BorderLayout.EAST);
         panel.add(field, BorderLayout.WEST);frame.setVisible(true);
     }
+    public static void Run(){
+        //для SelectMenuFrame - не удалять
+    }
 }

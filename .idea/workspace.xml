@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="config git">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="выбор задания">
+      <change afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task2/ConnectionFrame.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task3/ConnectionFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Sender.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Sender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task3/Dispatcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task3/Dispatcher.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +20,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -95,15 +96,15 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Controller" />
         <item itemvalue="Application.Dispatcher" />
+        <item itemvalue="Application.Controller" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
       </set>
     </attachedChunks>
   </component>
@@ -131,11 +132,20 @@
       <option name="presentableId" value="Default" />
       <updated>1774602171557</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="выбор задания">
+      <option name="closed" value="true" />
+      <created>1774637143971</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774637143971</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Структура заданий" />
-    <option name="LAST_COMMIT_MESSAGE" value="Структура заданий" />
+    <MESSAGE value="выбор задания" />
+    <option name="LAST_COMMIT_MESSAGE" value="выбор задания" />
   </component>
 </project>
