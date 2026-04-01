@@ -12,12 +12,12 @@ public class InputAdressFrame extends JFrame {
     private JFrame frame;
     public InputAdressFrame(){
         frame = new JFrame("Input address");
-        frame.setSize(600,400);
+        frame.setSize(600,600);
         frame.setLocationRelativeTo(null);
         frame.setBackground(Color.decode("#081421"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initElements();
-        frame.setResizable(false);
+        //frame.setResizable(false);
     }
     public void initElements(){
         JPanel panel = new JPanel(new BorderLayout());
@@ -40,6 +40,16 @@ public class InputAdressFrame extends JFrame {
             IPField.transferFocus();
         });
 
+        JButton TurnOnOff = CreateButton("  Включить Сервер  ");
+        TurnOnOff.addActionListener(e->{
+            if (TurnOnOff.getText().equals   ("  Включить Сервер  ")) {
+                TurnOnOff.setText("Выключить Сервер");
+            }
+            else{
+                TurnOnOff.setText("  Включить Сервер  ");
+            }
+        });
+
         JButton ConnectDisconnect = CreateButton("Подключиться");
         ConnectDisconnect.addActionListener(e->{
             if (ConnectDisconnect.getText().equals("Подключиться")) {
@@ -51,28 +61,41 @@ public class InputAdressFrame extends JFrame {
                 ConnectDisconnect.setText("Подключиться");
             }
         });
-
-        JPanel leftPan = new JPanel(new BorderLayout());
+        JPanel leftPan = new JPanel();
+        leftPan.setLayout(new BoxLayout(leftPan, BoxLayout.Y_AXIS));
         leftPan.setPreferredSize(new Dimension(330, 0));
 
-        JPanel leftTopPan = new JPanel(new FlowLayout());
+        JPanel leftTopPan = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftTopPan.setMaximumSize(new Dimension(Integer.MAX_VALUE, leftTopPan.getPreferredSize().height));
         leftTopPan.add(label);
         leftTopPan.add(IPField);
+        leftTopPan.add(TurnOnOff);
         leftTopPan.add(ConnectDisconnect);
 
-        JPanel bottomPan = new JPanel(new BorderLayout());
-        bottomPan.setBorder(BorderFactory.createEmptyBorder(5,100,5,100));
+        JPanel filepan = new JPanel();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fileChooser.setControlButtonsAreShown(false);
+
+        filepan.add(fileChooser);
+        filepan.setPreferredSize(new Dimension(250, 200));
+
+        JPanel bottomPan = new JPanel();
         JButton exitBtn = CreateButton("Выход");
-        exitBtn.addActionListener(e -> {
+        exitBtn.setSize(new Dimension(100, 40));
+        exitBtn.addActionListener(e ->
+        {
             frame.dispose();
         });
-        bottomPan.add(exitBtn, BorderLayout.CENTER);
+        bottomPan.add(exitBtn);
 
         JPanel rightPan = new JPanel(new BorderLayout());
-        rightPan.setPreferredSize(new Dimension(250, 0));
+        rightPan.setPreferredSize(new Dimension(250, 600));
 
-        leftPan.add(bottomPan, BorderLayout.SOUTH);
-        leftPan.add(leftTopPan, BorderLayout.NORTH);
+        leftPan.add(leftTopPan);
+        leftPan.add(filepan);
+        leftPan.add(bottomPan);
+
         panel.add(leftPan, BorderLayout.WEST);
         rightPan.add(new Button("XYZ"), BorderLayout.CENTER);
         panel.add(rightPan, BorderLayout.EAST);

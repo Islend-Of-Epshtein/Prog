@@ -8,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import GUI.Task1.InputAdressFrame.*;
-import GUI.Task2.ConnectionFrame.*;
-import GUI.Task3.ConnectionFrame.*;
 
 /// Меню выбора задания (Task1, Task2, Task3)
 public class SelectTaskMenu extends JFrame {
@@ -44,7 +41,7 @@ public class SelectTaskMenu extends JFrame {
         });
         button3.addActionListener(e -> {
             frame.dispose();
-            GUI.Task3.ConnectionFrame.Run();
+            GUI.Task3.Launcher.run(null);
         });
 
         panel.add(button1 );
