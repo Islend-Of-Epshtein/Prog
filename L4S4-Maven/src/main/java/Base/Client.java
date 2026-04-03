@@ -60,6 +60,13 @@ public class Client {
         return null;
     }
 
+    public void Off() throws IOException {
+        this.clientSocket.close();
+        this.in.close();
+        this.objIn.close();
+        this.out.close();
+        this.objOut.close();
+    }
     /// Проверяет, установлено ли соединение
     public boolean IsBound(){ return clientSocket.isBound(); }
     /// Получает адрес сокета

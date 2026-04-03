@@ -7,7 +7,7 @@ import java.net.Socket;
 /// Шаблон сервера
 public class Server {
     private final ServerSocket serverSocket;
-    private final Socket clientSocket;
+    private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
     private ObjectInputStream objIn;
@@ -17,15 +17,11 @@ public class Server {
     public Server() throws IOException
     {
         serverSocket = new ServerSocket(0);
-        clientSocket = serverSocket.accept();
-        initBuffer();
     }
     /// Конструктор с кастомными адресом и портом
     public Server(int port) throws IOException
     {
         serverSocket = new ServerSocket(port);
-        clientSocket = serverSocket.accept();
-        initBuffer();
     }
     private void initBuffer() throws IOException {
         out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())));
@@ -61,6 +57,22 @@ public class Server {
     public Object Read(boolean log) throws ClassNotFoundException, IOException {
         if(log) {return objIn.readObject(); }
         return null;
+    }
+    /// ждать новое соединие
+    public void Accept() throws IOException, ClassNotFoundException {
+        clientSocket = serverSocket.accept();
+        initBuffer();
+    }
+    /// ждать новое соединие
+    public void Off() throws IOException {
+        if(clientSocket!=null) {
+            this.clientSocket.close();
+            this.in.close();
+            this.objIn.close();
+            this.out.close();
+            this.objOut.close();
+        }
+        serverSocket.close();
     }
     /// Проверяет, установлено ли соединение
     public boolean IsBound(){ return serverSocket.isBound(); }

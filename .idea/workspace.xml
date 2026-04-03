@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="добавил в  таск 1 FileChooser">
+    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Закончил с InputAdressFrame">
+      <change afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/ClientFrame.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/ServerFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Reciver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Sender.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientReqest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +176,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775050925865</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Закончил с InputAdressFrame">
+      <option name="closed" value="true" />
+      <created>1775151071884</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1775151071884</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -187,6 +202,7 @@
     <MESSAGE value="Структура заданий" />
     <MESSAGE value="Окно клиента таск1" />
     <MESSAGE value="добавил в  таск 1 FileChooser" />
-    <option name="LAST_COMMIT_MESSAGE" value="добавил в  таск 1 FileChooser" />
+    <MESSAGE value="Закончил с InputAdressFrame" />
+    <option name="LAST_COMMIT_MESSAGE" value="Закончил с InputAdressFrame" />
   </component>
 </project>

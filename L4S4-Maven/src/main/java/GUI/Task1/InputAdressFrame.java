@@ -1,11 +1,27 @@
 package GUI.Task1;
 
+
+import Base.Client;
+import Base.Server;
+import Task1.FileServer;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class InputAdressFrame extends JFrame {
     private JFrame frame;
+    private Server server;
+    private Client client;
+    private File[] roots;
+    private int port;
     // Поля, к которым нужен доступ из разных методов
     private JButton ConnectDisconnect;
     private JTextField IPField;
@@ -16,6 +32,12 @@ public class InputAdressFrame extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setBackground(Color.decode("#081421"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        try{
+            port = getPort();
+        }
+        catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Ошибка порта: " + e);
+        }
         initElements();
     }
 
@@ -91,6 +113,7 @@ public class InputAdressFrame extends JFrame {
         JLabel address = new JLabel("IP-aдрес:");
 
         IPField = new JTextField(9);
+
         IPField.setDocument(new javax.swing.text.PlainDocument() {
             @Override
             public void insertString(int offs, String str, javax.swing.text.AttributeSet a)
@@ -104,20 +127,35 @@ public class InputAdressFrame extends JFrame {
                 }
             }
         });
+        IPField.setText("localhost");
 
         ConnectDisconnect = CreateButton("Подключиться", new Dimension(100, 25));
         ConnectDisconnect.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
-                connectServer();
+                try {
+                    if(!connectServer(IPField.getText())){ return;}
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
+                }
                 ConnectDisconnect.setText("  Отключиться  ");
             } else {
+                try {
+                    client.Off();
+                    client = null;
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Ошибка отключния: "+ ex);
+                }
                 ConnectDisconnect.setText("Подключиться");
             }
         });
 
         IPField.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
-                connectServer();
+                try {
+                    if(!connectServer(IPField.getText())){ return;}
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
+                }
                 ConnectDisconnect.setText("  Отключиться  ");
             }
             IPField.transferFocus();
@@ -135,6 +173,7 @@ public class InputAdressFrame extends JFrame {
     /**
      * Создание нижней панели с кнопками
      */
+
     private JPanel createBottomPanel() {
         JPanel bottomPan = new JPanel(new GridLayout(1, 2));
         bottomPan.setBackground(Color.decode("#ECE9D8"));
@@ -142,8 +181,20 @@ public class InputAdressFrame extends JFrame {
         JButton TurnOnOff = CreateButton("  Включить Сервер  ", new Dimension(130, 25));
         TurnOnOff.addActionListener(e -> {
             if (TurnOnOff.getText().equals("  Включить Сервер  ")) {
-                TurnOnOff.setText("Выключить Сервер");
+                try {
+                    server = new Server(port);
+                    TurnOnOff.setText("Выключить Сервер");
+                }
+                catch (Exception ex){
+                     JOptionPane.showMessageDialog(this, "Ошибка включения: "+ ex);
+                }
             } else {
+                try {
+                    server.Off();
+                    server = null;
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Ошибка выключения: "+ ex);
+                }
                 TurnOnOff.setText("  Включить Сервер  ");
             }
         });
@@ -163,7 +214,15 @@ public class InputAdressFrame extends JFrame {
 
         return bottomPan;
     }
-
+    private Runnable createTask(int port) {
+        return () -> {
+            try {
+                 FileServer reciver = new FileServer(port);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
     /**
      * Создание панели передачи данных
      */
@@ -228,10 +287,45 @@ public class InputAdressFrame extends JFrame {
         new InputAdressFrame();
     }
 
-    private void connectServer() {
-        // Логика подключения к серверу
+    private boolean connectServer(String address) throws IOException, ClassNotFoundException {
+        if(server==null) {JOptionPane.showMessageDialog(this, "Ошибка подключения к клиенту: Сервер недоступен"); return false;}
+        Thread servLauncher = new Thread(() -> {
+            try {
+                server.Accept();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Ошибка подключения к клиенту: "+ e);
+            }
+        });
+        servLauncher.start();
+        if(!Objects.equals(address, "")){
+            client = new Client(new InetSocketAddress(address, port).getAddress(), port);
+            return true;
+        }
+        return false;
     }
 
+    private int getPort() throws IOException {
+        List<ServerSocket> sockets = new ArrayList<ServerSocket>();
+        Integer[] freeport = new Integer[6];
+        for(int i=0;i<5;i++){
+            ServerSocket socket = new ServerSocket(0);
+            sockets.add(socket);
+            freeport[i] = socket.getLocalPort();
+        }
+        for(ServerSocket socket : sockets){
+            socket.close();
+        }
+        freeport[5]=0;
+        return (Integer) JOptionPane.showInputDialog(
+                frame,                          // родительский компонент
+                "Выберите порт:",                // сообщение
+                "Порт соединения",               // заголовок
+                JOptionPane.QUESTION_MESSAGE,   // тип сообщения
+                null,                           // иконка
+                freeport,                        // массив вариантов
+                freeport[0]                      // значение по умолчанию
+        );
+    }
     public static JButton CreateButton(String text, Dimension size) {
         JButton button = new JButton(text);
         button.setBackground(Color.decode("#eeeeee"));
