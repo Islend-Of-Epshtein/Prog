@@ -18,7 +18,8 @@ public class FileServer extends Server {
     public void Accept() throws IOException, ClassNotFoundException {
         super.Accept();
         if(this.IsBound()){
-            super.Write(File.listRoots());
+            super.Write(File.listRoots(), true);
+            super.Write((Object)null, true);
         }
     }
 }

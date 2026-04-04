@@ -3,11 +3,15 @@ package GUI.Task1;
 
 import Base.Client;
 import Base.Server;
+import Task1.ClientReqest;
 import Task1.FileServer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -16,15 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class InputAdressFrame extends JFrame {
+public class InputAdressFrame extends JFrame implements PropertyChangeListener {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private JFrame frame;
     private Server server;
     private Client client;
     private File[] roots;
+    private JComboBox<String> comboBox;
+    public void setFile(File[] files){
+        var oldName = roots;
+        roots =files;
+        pcs.firePropertyChange("File", oldName, roots);
+    }
     private int port;
     // Поля, к которым нужен доступ из разных методов
     private JButton ConnectDisconnect;
     private JTextField IPField;
+    public boolean readObjectClient = false;
+    public boolean readStringClient = false;
+    public boolean readStringServer = false;
 
     public InputAdressFrame() {
         frame = new JFrame("Input address");
@@ -40,7 +54,9 @@ public class InputAdressFrame extends JFrame {
         }
         initElements();
     }
-
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
     public void initElements() {
         JPanel panel = new JPanel(new GridLayout(1, 3));
         panel.setBackground(Color.decode("#ECE9D8"));
@@ -49,6 +65,9 @@ public class InputAdressFrame extends JFrame {
         panel.add(createLeftWrap());
         panel.add(createCenterWrap("Клиентская сторона"));
         panel.add(createCenterWrap("Серверная сторона"));
+
+        this.addPropertyChangeListener(this);//Для comboBox с путями;
+
 
         frame.add(panel);
         frame.setVisible(true);
@@ -83,7 +102,6 @@ public class InputAdressFrame extends JFrame {
         JPanel boxpan = new JPanel(new GridLayout(1, 1));
         boxpan.setBackground(Color.decode("#ECE9D8"));
         boxpan.setBorder(new EmptyBorder(0, 5, 10, 5));
-        JComboBox<String> comboBox = new JComboBox<>();
         boxpan.add(comboBox);
         filepan.add(boxpan);
 
@@ -337,5 +355,31 @@ public class InputAdressFrame extends JFrame {
         button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setVerticalTextPosition(SwingConstants.CENTER);
         return button;
+    }
+
+    private void clientObjectThread(ClientReqest client){
+        Thread objIn = new Thread(() -> {
+           while(true){
+               try {
+                   Object obj = client.Read(true);
+                   if (obj == null) { break; }
+                   this.roots = (File[]) obj;
+               } catch (Exception e) {
+                   JOptionPane.showMessageDialog(this, "Ошибка получения File[]: "+ e);
+               }
+           }
+        });
+        objIn.start();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String[] paths = new String[roots.length];
+        int i = 0;
+        for(File file:  roots){
+            paths[i] = file.getAbsolutePath();
+            i++;
+        }
+        comboBox = new JComboBox<>(paths);
     }
 }

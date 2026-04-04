@@ -48,6 +48,12 @@ public class Server {
         //ждем ответ
         return objIn.readObject();
     }
+    public void Write(Object obj, boolean log) throws IOException, ClassNotFoundException {
+        //отправляем
+        objOut.writeObject(obj);
+        objOut.flush();
+        //ждем ответ
+    }
 
     /// Прочитать сообщение из буффера от сервера
     public String Read() throws IOException {
