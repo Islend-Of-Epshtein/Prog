@@ -1,17 +1,18 @@
 package GUI.Task1;
 
-
-import Base.Client;
-import Base.Server;
-import Task1.ClientReqest;
+import Task1.ClientRequest;
+import Task1.Cortege;
 import Task1.FileServer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,25 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 public class InputAdressFrame extends JFrame implements PropertyChangeListener {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private JFrame frame;
-    private Server server;
-    private Client client;
+    private final JFrame frame;
+    private FileServer server;
+    private ClientRequest client;
     private File[] roots;
-    private JComboBox<String> comboBox;
-    public void setFile(File[] files){
-        var oldName = roots;
-        roots =files;
-        pcs.firePropertyChange("File", oldName, roots);
-    }
+    private JComboBox<String> comboBox = new JComboBox<>();
     private int port;
+    private JTable textTable = new JTable();
     // Поля, к которым нужен доступ из разных методов
     private JButton ConnectDisconnect;
     private JTextField IPField;
-    public boolean readObjectClient = false;
-    public boolean readStringClient = false;
-    public boolean readStringServer = false;
+    private String selectedFile="",selectedDir ="";
+    private DefaultTableModel fileTableModel;  // модель таблицы для директорий
+    private JTable fileTable;
 
     public InputAdressFrame() {
         frame = new JFrame("Input address");
@@ -54,9 +51,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         }
         initElements();
     }
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
-    }
+
     public void initElements() {
         JPanel panel = new JPanel(new GridLayout(1, 3));
         panel.setBackground(Color.decode("#ECE9D8"));
@@ -65,9 +60,6 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         panel.add(createLeftWrap());
         panel.add(createCenterWrap("Клиентская сторона"));
         panel.add(createCenterWrap("Серверная сторона"));
-
-        this.addPropertyChangeListener(this);//Для comboBox с путями;
-
 
         frame.add(panel);
         frame.setVisible(true);
@@ -101,19 +93,70 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         // ComboBox панель
         JPanel boxpan = new JPanel(new GridLayout(1, 1));
         boxpan.setBackground(Color.decode("#ECE9D8"));
+        comboBox.addActionListener(e -> {
+            if (comboBox.getSelectedItem() != null) {
+                selectedDir = (String) comboBox.getSelectedItem();
+                fileTableModel.setRowCount(0);
+                fileTableModel.addRow(new Object[]{".."});
+                fileTable.requestFocusInWindow();
+            }
+        });
         boxpan.setBorder(new EmptyBorder(0, 5, 10, 5));
         boxpan.add(comboBox);
         filepan.add(boxpan);
 
-        // TextArea панель
-        JPanel textpan = new JPanel(new GridLayout(1, 1));
-        textpan.setBorder(new EmptyBorder(0, 5, 0, 5));
-        JTextArea textArea = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        // Таблица для отображения директорий
+        JPanel tablePan = new JPanel(new GridLayout(1, 1));
+        tablePan.setBorder(new EmptyBorder(0, 5, 0, 5));
+
+        // Создаём модель таблицы с одним столбцом
+        fileTableModel = new DefaultTableModel(0, 1) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // запрещаем редактирование
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return "";  // убираем название столбца
+            }
+        };
+
+        fileTable = new JTable(fileTableModel);
+
+        // Убираем заголовок таблицы
+        fileTable.setTableHeader(null);
+
+        // Левое выравнивание содержимого
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        fileTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+
+        // Настройка выделения строк
+        fileTable.setRowSelectionAllowed(true);
+        fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Убираем сетку
+        fileTable.setShowGrid(false);
+        fileTable.setIntercellSpacing(new Dimension(0, 0));
+        fileTable.setRowHeight(20);
+
+        // Обработка двойного клика
+        fileTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    serverRequest();
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        fileTableModel.addRow(new Object[]{".."});
         scrollPane.setPreferredSize(new Dimension(0, 300));
-        textpan.add(scrollPane);
-        filepan.add(textpan);
+        tablePan.add(scrollPane);
+        filepan.add(tablePan);
 
         // IP панель
         filepan.add(createIpPanel());
@@ -152,12 +195,14 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
                     if(!connectServer(IPField.getText())){ return;}
+                    client.clientStringThread();
+                    ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
                 }
-                ConnectDisconnect.setText("  Отключиться  ");
             } else {
                 try {
+                    client.removePropertyChangeListener(this);
                     client.Off();
                     client = null;
                 } catch (IOException ex) {
@@ -200,7 +245,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         TurnOnOff.addActionListener(e -> {
             if (TurnOnOff.getText().equals("  Включить Сервер  ")) {
                 try {
-                    server = new Server(port);
+                    server = new FileServer(port);
                     TurnOnOff.setText("Выключить Сервер");
                 }
                 catch (Exception ex){
@@ -218,7 +263,15 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         });
 
         JButton exitBtn = CreateButton("Выход", new Dimension(80, 25));
-        exitBtn.addActionListener(e -> frame.dispose());
+        exitBtn.addActionListener(e -> {
+            try {
+                client.Off();
+                server.Off();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            frame.dispose();
+        });
 
         JPanel left = new JPanel();
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -231,15 +284,6 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         bottomPan.add(right);
 
         return bottomPan;
-    }
-    private Runnable createTask(int port) {
-        return () -> {
-            try {
-                 FileServer reciver = new FileServer(port);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        };
     }
     /**
      * Создание панели передачи данных
@@ -255,10 +299,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         clientTransfer.setFocusable(false);
 
         clientTransfer.addActionListener(e -> {
-            // передача клиенту
         });
         serverTransfer.addActionListener(e -> {
-            // передача серверу
+            serverRequest();
         });
 
         transferPan.add(clientTransfer);
@@ -297,29 +340,41 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         return centerWrap;
     }
 
-    public static void main() {
-        new InputAdressFrame();
-    }
-
     public static void Run() {
         new InputAdressFrame();
     }
 
-    private boolean connectServer(String address) throws IOException, ClassNotFoundException {
-        if(server==null) {JOptionPane.showMessageDialog(this, "Ошибка подключения к клиенту: Сервер недоступен"); return false;}
+    private boolean connectServer(String address) throws IOException, ClassNotFoundException
+    {
+        if (server == null) {
+            JOptionPane.showMessageDialog(this, "Ошибка подключения: Сервер недоступен");
+            return false;
+        }
+
+        if (Objects.equals(address, "")) {
+            return false;
+        }
+
+        // 1. Создаём клиента (буферы инициализируются в конструкторе)
+        client = new ClientRequest(new InetSocketAddress(address, port).getAddress(), port);
+
+        // 2. Запускаем поток прослушивания
+        client.clientStringThread();
+        server.serverStringThread();
+        // 3. Запускаем сервер в отдельном потоке
         Thread servLauncher = new Thread(() -> {
             try {
                 server.Accept();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Ошибка подключения к клиенту: "+ e);
+                SwingUtilities.invokeLater(() ->
+                        JOptionPane.showMessageDialog(this, "Ошибка подключения: " + e)
+                );
             }
         });
         servLauncher.start();
-        if(!Objects.equals(address, "")){
-            client = new Client(new InetSocketAddress(address, port).getAddress(), port);
-            return true;
-        }
-        return false;
+
+        client.addPropertyChangeListener("message", this);
+        return true;
     }
 
     private int getPort() throws IOException {
@@ -344,6 +399,36 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 freeport[0]                      // значение по умолчанию
         );
     }
+    private void serverRequest(){
+        if (comboBox.getSelectedIndex() == -1) {return;}
+        // передача серверу
+        // редактируем путь и получаем от сервера следующую иерархию
+
+
+        if(fileTable.getSelectedRow()!=-1) {selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);}
+        else {
+                selectedFile = "";
+        }
+
+        if(selectedFile.equals("..") && selectedDir.length()!=3){
+            selectedFile = "";
+            selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
+            selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
+        }
+
+        String absolutePath = selectedDir + selectedFile;
+
+        selectedDir = selectedDir + selectedFile + '\\';
+
+        fileTableModel.setRowCount(0);
+        fileTableModel.addRow(new Object[]{".."});
+
+        try {
+            client.Write(absolutePath, true);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     public static JButton CreateButton(String text, Dimension size) {
         JButton button = new JButton(text);
         button.setBackground(Color.decode("#eeeeee"));
@@ -357,29 +442,15 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         return button;
     }
 
-    private void clientObjectThread(ClientReqest client){
-        Thread objIn = new Thread(() -> {
-           while(true){
-               try {
-                   Object obj = client.Read(true);
-                   if (obj == null) { break; }
-                   this.roots = (File[]) obj;
-               } catch (Exception e) {
-                   JOptionPane.showMessageDialog(this, "Ошибка получения File[]: "+ e);
-               }
-           }
-        });
-        objIn.start();
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        String[] paths = new String[roots.length];
-        int i = 0;
-        for(File file:  roots){
-            paths[i] = file.getAbsolutePath();
-            i++;
+        if(client == null) {return;}
+        Cortege massage = (Cortege)evt.getNewValue();
+        if(massage.isRootElement())
+        {
+            comboBox.addItem(massage.getData());
+            return;
         }
-        comboBox = new JComboBox<>(paths);
+        fileTableModel.addRow(new Object[]{massage.getData()});
     }
 }

@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Начал делать Model-Task1: Реализовал подключение сервера и клиента.">
+    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Общение сервера клиента">
+      <change afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Cortege.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Base/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientReqest.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientReqest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientReqest.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task2/ProcessDataTransmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task2/ProcessDataTransmitter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/test/java/org/build/AppTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,13 +24,14 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -50,20 +56,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Controller.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Dispatcher.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DispatcherGUI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Launcher.executor&quot;: &quot;Run&quot;,
-    &quot;Application.SelectTaskFrame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Task3.gui.Launcher.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;L4S4&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Controller.executor": "Run",
+    "Application.Dispatcher.executor": "Run",
+    "Application.DispatcherGUI.executor": "Run",
+    "Application.Launcher.executor": "Run",
+    "Application.SelectTaskFrame.executor": "Run",
+    "Application.Task3.gui.Launcher.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "L4S4",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.SelectTaskFrame">
     <configuration name="Controller" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Task3.Controller" />
@@ -188,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775238685107</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Общение сервера клиента">
+      <option name="closed" value="true" />
+      <created>1775308078256</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1775308078256</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -208,6 +222,7 @@
     <MESSAGE value="добавил в  таск 1 FileChooser" />
     <MESSAGE value="Закончил с InputAdressFrame" />
     <MESSAGE value="Начал делать Model-Task1: Реализовал подключение сервера и клиента." />
-    <option name="LAST_COMMIT_MESSAGE" value="Начал делать Model-Task1: Реализовал подключение сервера и клиента." />
+    <MESSAGE value="Общение сервера клиента" />
+    <option name="LAST_COMMIT_MESSAGE" value="Общение сервера клиента" />
   </component>
 </project>

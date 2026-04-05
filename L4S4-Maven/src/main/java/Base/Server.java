@@ -8,10 +8,9 @@ import java.net.Socket;
 public class Server {
     private final ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintWriter out;
+    private BufferedWriter out;
     private BufferedReader in;
-    private ObjectInputStream objIn;
-    private ObjectOutputStream objOut;
+    private boolean In, Out;
 
     /// Используем свободный порт и локальный адрес
     public Server() throws IOException
@@ -23,60 +22,49 @@ public class Server {
     {
         serverSocket = new ServerSocket(port);
     }
-    private void initBuffer() throws IOException {
-        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())));
+    private void initOutBuffer() throws IOException {
+        out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+        Out = true;
+    }
+    public void initInBuffer() throws IOException {
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        objOut = new ObjectOutputStream(clientSocket.getOutputStream());
-        objIn = new ObjectInputStream(clientSocket.getInputStream());
+        In = true;
     }
     /// Отправить сообщение, а затем получить ответ от сервера
     public String Write(String str) throws IOException {
         //отправляем
         out.write(str);
+        out.flush();
         //ждем ответ
         return in.readLine();
     }
     /// Отправить сообщение, log необходимо установить в true
     public void Write(String str, boolean log) throws IOException {
         //отправляем если true
-        if(log) { out.write(str); }
-    }
-    public Object Write(Object obj) throws IOException, ClassNotFoundException {
-        //отправляем
-        objOut.writeObject(obj);
-        objOut.flush();
-        //ждем ответ
-        return objIn.readObject();
-    }
-    public void Write(Object obj, boolean log) throws IOException, ClassNotFoundException {
-        //отправляем
-        objOut.writeObject(obj);
-        objOut.flush();
-        //ждем ответ
+        if(log) {
+            out.write(str);
+            out.newLine();
+            out.flush();
+        }
     }
 
     /// Прочитать сообщение из буффера от сервера
     public String Read() throws IOException {
         return in.readLine();
     }
-    /// log = true для чтения объекта из буфера
-    public Object Read(boolean log) throws ClassNotFoundException, IOException {
-        if(log) {return objIn.readObject(); }
-        return null;
-    }
     /// ждать новое соединие
     public void Accept() throws IOException, ClassNotFoundException {
         clientSocket = serverSocket.accept();
-        initBuffer();
+        initOutBuffer();
+        out.flush();
+        initInBuffer();
     }
     /// ждать новое соединие
     public void Off() throws IOException {
         if(clientSocket!=null) {
             this.clientSocket.close();
             this.in.close();
-            this.objIn.close();
             this.out.close();
-            this.objOut.close();
         }
         serverSocket.close();
     }
