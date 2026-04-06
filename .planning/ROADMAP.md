@@ -131,6 +131,8 @@
 - QR-003: Документирование
 - TD-001, TD-002, TD-003: Технический долг
 
+**Plans:** 5 plans in 4 waves
+
 **Задачи:**
 1. Переименовать пакеты: Base → base, GUI → gui, Task* → task*
 2. Переименовать методы: Write → write, Read → read, Accept → accept
@@ -148,6 +150,13 @@
 **Артефакты:**
 - Полностью отрефакторенный код
 - Обновлённые импорты во всех файлах
+
+**Plans:**
+- [ ] 05-01-PLAN.md — Package renaming (Base→base, GUI→gui, Task*→task*)
+- [ ] 05-02-PLAN.md — Method renaming in Base classes (Server, Client)
+- [ ] 05-03-PLAN.md — Method renaming in GUI classes (SelectTaskMenu, InputAdressFrame)
+- [ ] 05-04-PLAN.md — Import cleanup and JavaDoc documentation
+- [ ] 05-05-PLAN.md — Resolve empty handlers in InputAdressFrame
 
 ---
 
