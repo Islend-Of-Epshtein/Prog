@@ -110,6 +110,8 @@ public class Launcher {
         startControllerButton.setFont(new Font("Arial", Font.BOLD, 12));
         startControllerButton.setBackground(new Color(0, 120, 215));
         startControllerButton.setForeground(Color.WHITE);
+        startControllerButton.setOpaque(true);
+        startControllerButton.setBorderPainted(false);
         startControllerButton.setFocusPainted(false);
         startControllerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         mainPanel.add(startControllerButton, gbc);
@@ -120,6 +122,8 @@ public class Launcher {
         stopControllerButton.setFont(new Font("Arial", Font.BOLD, 12));
         stopControllerButton.setBackground(new Color(200, 0, 0));
         stopControllerButton.setForeground(Color.WHITE);
+        stopControllerButton.setOpaque(true);
+        stopControllerButton.setBorderPainted(false);
         stopControllerButton.setFocusPainted(false);
         stopControllerButton.setEnabled(false);
         stopControllerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -133,6 +137,8 @@ public class Launcher {
         startDispatcherButton.setFont(new Font("Arial", Font.BOLD, 12));
         startDispatcherButton.setBackground(new Color(0, 150, 100));
         startDispatcherButton.setForeground(Color.WHITE);
+        startDispatcherButton.setOpaque(true);
+        startDispatcherButton.setBorderPainted(false);
         startDispatcherButton.setFocusPainted(false);
         startDispatcherButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         startDispatcherButton.addActionListener(e -> startDispatcher());

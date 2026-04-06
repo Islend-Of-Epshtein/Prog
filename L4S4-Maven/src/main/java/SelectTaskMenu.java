@@ -54,13 +54,14 @@ public class SelectTaskMenu extends JFrame {
     }
     public static JButton CreateButton(String text){
         JButton button = new JButton(text);
-        button.setBackground(Color.decode("#d1d1d1"));
+        button.setBackground(new Color(70, 130, 180));
         button.setFont(new Font("Calibri", Font.BOLD, 16));
-        button.setForeground(Color.decode("#081421"));
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
 
-        Border bevelBorder = new BevelBorder(0, Color.BLACK, Color.BLACK);
         Border paddingBorder = BorderFactory.createEmptyBorder(15, 20, 10, 20);
-        button.setBorder(BorderFactory.createCompoundBorder(bevelBorder, paddingBorder));
+        button.setBorder(paddingBorder);
         button.setFocusPainted(false);
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setHorizontalAlignment(SwingConstants.CENTER);
@@ -71,15 +72,11 @@ public class SelectTaskMenu extends JFrame {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setPreferredSize(new Dimension(button.getWidth()*3/2, button.getHeight()*3/2));
-                button.setForeground(Color.decode("#052e57"));
-                button.setBackground(Color.white);
+                button.setBackground(new Color(100, 149, 237));
             }
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setPreferredSize(new Dimension(button.getWidth(), button.getHeight()));
-                button.setBackground(Color.decode("#d1d1d1"));
-                button.setForeground(Color.decode("#081421"));
+                button.setBackground(new Color(70, 130, 180));
             }
         });
         return button;
