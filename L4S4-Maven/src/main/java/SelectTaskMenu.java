@@ -1,17 +1,14 @@
 
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /// Меню выбора задания (Task1, Task2, Task3)
 public class SelectTaskMenu extends JFrame {
-    private static JFrame frame = new JFrame("Select Task");;
+    private static final JFrame frame = new JFrame("Select Task");
     public static void main(String[] args){
         InitFrame();
     }
@@ -25,19 +22,13 @@ public class SelectTaskMenu extends JFrame {
         JButton button2 = CreateButton("Task №2");
         JButton button3 = CreateButton("Task №3");
 
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                GUI.Task1.InputAdressFrame.Run();
-            }
+        button1.addActionListener(e -> {
+            frame.dispose();
+            GUI.Task1.InputAdressFrame.Run();
         });
-        button2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                GUI.Task2.ConnectionFrame.Run();
-            }
+        button2.addActionListener(e -> {
+            frame.dispose();
+            GUI.Task2.ConnectionFrame.Run();
         });
         button3.addActionListener(e -> {
             frame.dispose();

@@ -44,11 +44,15 @@ public class FileServer extends Server
                         result = file.list();
                     }
                     if(file.isFile()){
-                        result[0] = Files.readString(Paths.get(file.getPath()));
+                        if (result != null) {
+                            result[0] = Files.readString(Paths.get(file.getPath()));
+                        }
                     }
-                    if(file.isDirectory() || file.getName().equals("")){
+                    if(file.isDirectory() || file.getName().isEmpty()){
                         result = file.list();
                     }
+
+                    assert result != null;
                     for(String res: result){
                         Write(res, true);
                     }

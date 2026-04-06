@@ -13,7 +13,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -26,14 +25,13 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     private final JFrame frame;
     private FileServer server;
     private ClientRequest client;
-    private File[] roots;
-    private JComboBox<String> comboBox = new JComboBox<>();
+    private final JComboBox<String> comboBox = new JComboBox<>();
     private int port;
     private JButton ConnectDisconnect;
     private JTextField IPField;
-    private String selectedFile = "",selectedDir = "";
+    private String selectedDir = "";
     private DefaultTableModel fileTableModel, clientTableModel, serverTableModel;  // модель таблицы для директорий
-    private JTable fileTable, clientTable, serverTable;
+    private JTable fileTable;
 
     public InputAdressFrame() {
         frame = new JFrame("Input address");
@@ -191,7 +189,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         ConnectDisconnect.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
-                    if(!connectServer(IPField.getText())){ return;}
+                    if(connectServer(IPField.getText())){ return;}
                     ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
@@ -211,7 +209,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         IPField.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
-                    if(!connectServer(IPField.getText())){ return;}
+                    if(connectServer(IPField.getText())){ return;}
                     ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
@@ -248,6 +246,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
             } else {
                 try {
+                    server.removePropertyChangeListener(this);
                     server.Off();
                     server = null;
                     serverTableModel.setRowCount(0);
@@ -370,10 +369,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         scrollPane.setBorder(BorderFactory.createBevelBorder(1));
 
         if (log) {
-            this.clientTable = localTable;
             this.clientTableModel = clientAreaModel;
         } else {
-            this.serverTable = localTable;
             this.serverTableModel = clientAreaModel;
         }
 
@@ -388,15 +385,15 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         new InputAdressFrame();
     }
 
-    private boolean connectServer(String address) throws IOException, ClassNotFoundException
+    private boolean connectServer(String address) throws IOException
     {
         if (server == null) {
             JOptionPane.showMessageDialog(this, "Ошибка подключения: Сервер недоступен");
-            return false;
+            return true;
         }
 
         if (Objects.equals(address, "")) {
-            return false;
+            return true;
         }
 
         // клиент
@@ -425,11 +422,11 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         client.addPropertyChangeListener("OutClientMessage", this);
         server.addPropertyChangeListener("OutServerMessage", this);
-        return true;
+        return false;
     }
 
     private int getPort() throws IOException {
-        List<ServerSocket> sockets = new ArrayList<ServerSocket>();
+        List<ServerSocket> sockets = new ArrayList<>();
         Integer[] freeport = new Integer[6];
         for(int i=0;i<5;i++){
             ServerSocket socket = new ServerSocket(0);
@@ -454,7 +451,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         if (comboBox.getSelectedIndex() == -1) {return;}
         // передача серверу
         // редактируем путь и получаем от сервера следующую иерархию
-        if(fileTable.getSelectedRow()!=-1) {selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);}
+        String selectedFile = "";
+        if(fileTable.getSelectedRow()!=-1) {
+            selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);}
         else {
                 selectedFile = "";
         }

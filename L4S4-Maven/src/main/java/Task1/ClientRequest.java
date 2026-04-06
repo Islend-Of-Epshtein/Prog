@@ -45,22 +45,6 @@ public class ClientRequest extends Client
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
-    public Cortege[] getRoots(){
-        int i = 0, j=0;
-        for (Cortege message: messages){
-            if(message.isRootElement()){
-                i++;
-            }
-        }
-        Cortege[] res = new Cortege[i];
-        for (Cortege message: messages){
-            if(message.isRootElement()){
-                res[j] = message;
-                j++;
-            }
-        }
-        return res;
-    }
 
     @Override
     public void Off() throws IOException {
