@@ -68,6 +68,6 @@ public class Client {
     public Socket GetSocket(){
         return clientSocket;
     }
-    public boolean isInInit() { return In;}
-    public boolean isOutInit() { return Out;}
+    public BufferedReader getIn() { return in;}
+    public BufferedWriter isOutInit() { return out;}
 }

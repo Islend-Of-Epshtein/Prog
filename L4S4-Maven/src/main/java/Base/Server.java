@@ -80,4 +80,5 @@ public class Server {
     public Socket GetSocket(){
         return clientSocket;
     }
+    public BufferedReader getIn() { return in;}
 }

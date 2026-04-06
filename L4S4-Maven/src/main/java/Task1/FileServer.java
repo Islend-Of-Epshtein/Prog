@@ -3,6 +3,8 @@ package Task1;
 import Base.Server;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +13,9 @@ import java.time.LocalTime;
 
 import static Task1.Cortege.isRoot;
 
-public class FileServer extends Server {
+public class FileServer extends Server
+{
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private File file;
     private Thread pathIn;
     public FileServer(int port) throws IOException {
@@ -20,12 +24,17 @@ public class FileServer extends Server {
     public FileServer() throws IOException {
         super();
     }
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
     public void serverStringThread(){
         pathIn = new Thread(() -> {
             while(true){
                 try {
                     String str = Read();
-                    System.out.println("Сервер принял:" + str);
                     if (str == null) { break; }
                     file = new File(str);
                     String[] result = new String[1];
@@ -40,8 +49,7 @@ public class FileServer extends Server {
                         result = file.list();
                     }
                     for(var res: result){
-                        System.out.println("Сервер передал(ответ): "+ res);
-                        super.Write(res, true);
+                        Write(res, true);
                     }
                 }
                 catch (Exception _) {
@@ -55,7 +63,8 @@ public class FileServer extends Server {
         super.Accept();
         if(this.IsBound()){
             for (var item: File.listRoots()){
-                System.out.println("Сервер передал: "+ item.getAbsolutePath());
+                Cortege outWithTime = new Cortege(item.getAbsolutePath(), LocalTime.now(), true);
+                pcs.firePropertyChange("OutServerMassage", outWithTime.isRootElement(), outWithTime);
                 super.Write(item.getAbsolutePath(), true);
             }
         }
@@ -63,6 +72,19 @@ public class FileServer extends Server {
     @Override
     public void Off() throws IOException {
         super.Off();
-        pathIn.interrupt();
+        if(pathIn!=null){ pathIn.interrupt(); }
+    }
+    @Override
+    public void Write(String str, boolean log) throws IOException {
+        Cortege newData = new Cortege(str, LocalTime.now(), isRoot(str));
+        pcs.firePropertyChange("OutServerMessage", newData.getData().length() , newData);
+        super.Write(str, log);
+    }
+    @Override
+    public String Read() throws IOException {
+        String str = getIn().readLine();
+        Cortege newData = new Cortege(str, LocalTime.now(), isRoot(str));
+        pcs.firePropertyChange("InServerMessage", str.length(), newData);
+        return str;
     }
 }

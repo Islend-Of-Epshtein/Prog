@@ -2,6 +2,7 @@ package Task1;
 
 import java.io.File;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Cortege
 {
@@ -22,6 +23,6 @@ public class Cortege
         return false;
     }
     public String getData(){ return data; }
-    public LocalTime getTime(){ return time; }
+    public String getTime(){ return time.format(DateTimeFormatter.ofPattern("HH:mm:ss")); }
     public boolean isRootElement(){ return root; }
 }
