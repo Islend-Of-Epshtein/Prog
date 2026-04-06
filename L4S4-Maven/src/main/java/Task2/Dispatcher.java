@@ -53,6 +53,6 @@ public class Dispatcher {
         }
 
         DispatcherView view = new ConsoleDispatcherView();
-        new Task2Dispatcher(host, port, view).start();
+        new Dispatcher(host, port, view).start();
     }
 }

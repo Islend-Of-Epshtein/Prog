@@ -58,6 +58,6 @@ public class Controller {
             }
         }
 
-        new Task2Controller(port).start();
+        new Controller(port).start();
     }
 }

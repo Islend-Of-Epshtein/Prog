@@ -33,7 +33,7 @@ public class Task2ConsoleDemo {
             }
         }
 
-        new Task2Controller(port).start();
+        new Controller(port).start();
     }
 
     private static void runDispatcher(String[] args) {
@@ -52,7 +52,7 @@ public class Task2ConsoleDemo {
             }
         }
 
-        new Task2Dispatcher(host, port, new ConsoleDispatcherView()).start();
+        new Dispatcher(host, port, new ConsoleDispatcherView()).start();
     }
 
     private static void printHelp() {
