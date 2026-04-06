@@ -17,14 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 
 public class InputAdressFrame extends JFrame implements PropertyChangeListener {
-    private final int MesegeCount = 15;
     private final JFrame frame;
     private FileServer server;
     private ClientRequest client;
@@ -47,7 +45,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             port = getPort();
         }
         catch (Exception e){
-            JOptionPane.showMessageDialog(this, "Ошибка порта: " + e);
+            JOptionPane.showMessageDialog(this, "Ошибка порта: порт не выбран" );
+            frame.dispose();
         }
         initElements();
     }
@@ -145,7 +144,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         fileTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2 && client!=null) {
                     serverRequest();
                 }
             }
@@ -188,13 +187,11 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             }
         });
         IPField.setText("localhost");
-
         ConnectDisconnect = CreateButton("Подключиться", new Dimension(100, 25));
         ConnectDisconnect.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
                     if(!connectServer(IPField.getText())){ return;}
-                    client.clientStringThread();
                     ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
@@ -204,10 +201,10 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                     client.removePropertyChangeListener(this);
                     client.Off();
                     client = null;
+                    ConnectDisconnect.setText("Подключиться");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка отключния: "+ ex);
                 }
-                ConnectDisconnect.setText("Подключиться");
             }
         });
 
@@ -215,10 +212,10 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
                     if(!connectServer(IPField.getText())){ return;}
+                    ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
                 }
-                ConnectDisconnect.setText("  Отключиться  ");
             }
             IPField.transferFocus();
         });
@@ -248,26 +245,29 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 catch (Exception ex){
                      JOptionPane.showMessageDialog(this, "Ошибка включения: "+ ex);
                 }
+
             } else {
                 try {
                     server.Off();
                     server = null;
+                    serverTableModel.setRowCount(0);
+                    TurnOnOff.setText("  Включить Сервер  ");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка выключения: "+ ex);
                 }
-                TurnOnOff.setText("  Включить Сервер  ");
+
             }
         });
 
         JButton exitBtn = CreateButton("Выход", new Dimension(80, 25));
         exitBtn.addActionListener(e -> {
             try {
-                client.Off();
-                server.Off();
+                if(client!=null){ client.Off(); }
+                if(server!=null){ server.Off(); }
+                frame.dispose();
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(this, "Ошибка выключения: "+ ex);
             }
-            frame.dispose();
         });
 
         JPanel left = new JPanel();
@@ -298,7 +298,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         clientTransfer.addActionListener(e -> {
         });
         serverTransfer.addActionListener(e -> {
-            serverRequest();
+            if(client!=null) {serverRequest(); }
         });
 
         transferPan.add(clientTransfer);
@@ -399,13 +399,14 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             return false;
         }
 
-        // 1. Создаём клиента (буферы инициализируются в конструкторе)
+        // клиент
         client = new ClientRequest(new InetSocketAddress(address, port).getAddress(), port);
-
-        // 2. Запускаем поток прослушивания
+        clientTableModel.setRowCount(0);
+        comboBox.removeAllItems();
+        // поток прослушивания
         client.clientStringThread();
-        server.serverStringThread();
-        // 3. Запускаем сервер в отдельном потоке
+
+        // сервер в отдельном потоке
         Thread servLauncher = new Thread(() -> {
             try {
                 server.Accept();
@@ -417,12 +418,13 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         });
         servLauncher.start();
 
+        server.serverStringThread();
+
         client.addPropertyChangeListener("InClientMessage", this);
         server.addPropertyChangeListener("InServerMessage", this);
 
         client.addPropertyChangeListener("OutClientMessage", this);
         server.addPropertyChangeListener("OutServerMessage", this);
-
         return true;
     }
 
@@ -470,10 +472,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         fileTableModel.addRow(new Object[]{".."});
 
         try {
-
             client.Write(absolutePath, true);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            JOptionPane.showMessageDialog(this, "Ошибка передачи от клианта: " + ex);
         }
     }
     public static JButton CreateButton(String text, Dimension size) {
@@ -513,7 +514,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             }
             case ("OutClientMessage"):
             {
-                clientTableModel.addRow(new Object[]{"Клиент ответил:", ""});
+                clientTableModel.addRow(new Object[]{"Клиент отправил:", ""});
                 clientTableModel.addRow(new Object[]{data.getData(), data.getTime()});
                 break;
             }

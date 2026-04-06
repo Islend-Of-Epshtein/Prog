@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 /// Меню выбора задания (Task1, Task2, Task3)
 public class SelectTaskMenu extends JFrame {
     private static JFrame frame = new JFrame("Select Task");;
-    static void main(String[] args){
+    public static void main(String[] args){
         InitFrame();
     }
     public static void InitFrame(){

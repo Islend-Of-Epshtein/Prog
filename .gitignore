@@ -2,6 +2,12 @@
 .vs
 obj\Debug
 bin\Debug
+/out/production/Prog/GUI/Task3/Launcher$1.class
+/out/production/Prog/GUI/Task3/Launcher.class
+/out/production/Prog/SelectTaskMenu$1.class
+/out/production/Prog/SelectTaskMenu$2.class
+/out/production/Prog/SelectTaskMenu$3.class
+/out/production/Prog/SelectTaskMenu.class
 
 # Maven
 target/

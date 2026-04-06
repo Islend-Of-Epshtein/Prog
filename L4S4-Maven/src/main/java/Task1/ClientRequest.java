@@ -17,6 +17,7 @@ public class ClientRequest extends Client
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final List<Cortege> messages = new ArrayList<>();
     private Thread strIn;
+    private volatile boolean running = true;
 
     public ClientRequest(InetAddress address, int port) throws IOException {
         super(address, port);
@@ -25,12 +26,14 @@ public class ClientRequest extends Client
     }
     public void clientStringThread(){
         strIn = new Thread(() -> {
-            while(true){
+            while(running){
                 try {
                     String str = Read();
                     if (str == null) { break; }
                 }
                 catch (Exception _) {
+                    System.out.println("Прерывание потока чтения клианта");
+                    break;
                 }
             }
         });
@@ -44,13 +47,13 @@ public class ClientRequest extends Client
     }
     public Cortege[] getRoots(){
         int i = 0, j=0;
-        for (var message: messages){
+        for (Cortege message: messages){
             if(message.isRootElement()){
                 i++;
             }
         }
         Cortege[] res = new Cortege[i];
-        for (var message: messages){
+        for (Cortege message: messages){
             if(message.isRootElement()){
                 res[j] = message;
                 j++;
@@ -62,7 +65,7 @@ public class ClientRequest extends Client
     @Override
     public void Off() throws IOException {
         super.Off();
-        if(strIn!=null) { strIn.interrupt(); }
+        if(strIn!=null) { running = false; strIn.interrupt(); }
     }
     @Override
     public void Write(String str, boolean log) throws IOException {

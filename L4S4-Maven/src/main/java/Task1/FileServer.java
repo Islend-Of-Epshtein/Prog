@@ -18,6 +18,7 @@ public class FileServer extends Server
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private File file;
     private Thread pathIn;
+    private volatile boolean running = true;
     public FileServer(int port) throws IOException {
         super(port);
     }
@@ -32,7 +33,7 @@ public class FileServer extends Server
     }
     public void serverStringThread(){
         pathIn = new Thread(() -> {
-            while(true){
+            while(running){
                 try {
                     String str = Read();
                     if (str == null) { break; }
@@ -48,7 +49,7 @@ public class FileServer extends Server
                     if(file.isDirectory() || file.getName().equals("")){
                         result = file.list();
                     }
-                    for(var res: result){
+                    for(String res: result){
                         Write(res, true);
                     }
                 }
@@ -62,7 +63,7 @@ public class FileServer extends Server
     public void Accept() throws IOException, ClassNotFoundException {
         super.Accept();
         if(this.IsBound()){
-            for (var item: File.listRoots()){
+            for (File item: File.listRoots()){
                 Cortege outWithTime = new Cortege(item.getAbsolutePath(), LocalTime.now(), true);
                 pcs.firePropertyChange("OutServerMassage", outWithTime.isRootElement(), outWithTime);
                 super.Write(item.getAbsolutePath(), true);
@@ -72,7 +73,7 @@ public class FileServer extends Server
     @Override
     public void Off() throws IOException {
         super.Off();
-        if(pathIn!=null){ pathIn.interrupt(); }
+        if(pathIn!=null){ running = false; pathIn.interrupt(); }
     }
     @Override
     public void Write(String str, boolean log) throws IOException {

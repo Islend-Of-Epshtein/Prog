@@ -17,7 +17,7 @@ public class Cortege
     public static File[] roots = File.listRoots();
     public static boolean isRoot(String str){
         File file = new File(str);
-        for(var root : roots){
+        for(File root : roots){
             if(root.equals(file)){ return true;}
         }
         return false;
