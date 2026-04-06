@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class ConnectionFrame {
-<<<<<<< HEAD
     private Process controllerProcess;
     private Process dispatcherProcess;
     private JTextField portField;
@@ -34,7 +33,6 @@ public class ConnectionFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Заголовок
         JLabel titleLabel = new JLabel("КОНТРОЛЛЕР ТЕХНОЛОГИЧЕСКОГО ПРОЦЕССА");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -43,7 +41,6 @@ public class ConnectionFrame {
         gbc.gridwidth = 2;
         mainPanel.add(titleLabel, gbc);
 
-        // Порт
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
@@ -56,7 +53,6 @@ public class ConnectionFrame {
         gbc.gridx = 1;
         mainPanel.add(portField, gbc);
 
-        // Информация
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
@@ -66,12 +62,10 @@ public class ConnectionFrame {
         infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         mainPanel.add(infoLabel, gbc);
 
-        // Разделитель
         gbc.gridy++;
         JSeparator separator = new JSeparator();
         mainPanel.add(separator, gbc);
 
-        // Статус контроллера
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
@@ -85,7 +79,6 @@ public class ConnectionFrame {
         gbc.gridx = 1;
         mainPanel.add(controllerStatus, gbc);
 
-        // Статус диспетчера
         gbc.gridy++;
         gbc.gridx = 0;
         JLabel dispatcherLabel = new JLabel("Диспетчер:");
@@ -98,12 +91,10 @@ public class ConnectionFrame {
         gbc.gridx = 1;
         mainPanel.add(dispatcherStatus, gbc);
 
-        // Разделитель
         gbc.gridy++;
         JSeparator separator2 = new JSeparator();
         mainPanel.add(separator2, gbc);
 
-        // Кнопка запуска контроллера
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
@@ -116,7 +107,6 @@ public class ConnectionFrame {
         startControllerButton.addActionListener(e -> startController());
         mainPanel.add(startControllerButton, gbc);
 
-        // Кнопка остановки контроллера
         gbc.gridx = 1;
         stopControllerButton = new JButton("ОСТАНОВИТЬ");
         stopControllerButton.setFont(new Font("Arial", Font.BOLD, 12));
@@ -128,7 +118,6 @@ public class ConnectionFrame {
         stopControllerButton.addActionListener(e -> stopController());
         mainPanel.add(stopControllerButton, gbc);
 
-        // Кнопка запуска диспетчера
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
@@ -327,7 +316,4 @@ public class ConnectionFrame {
         }
         SwingUtilities.invokeLater(() -> new ConnectionFrame());
     }
-=======
-    public static void Run(){}
->>>>>>> 2fadedf371103816113f45ae1ebf6b5ebec9d037
 }
