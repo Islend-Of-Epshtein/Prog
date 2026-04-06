@@ -17,25 +17,25 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 
 public class InputAdressFrame extends JFrame implements PropertyChangeListener {
+    private final int MesegeCount = 15;
     private final JFrame frame;
     private FileServer server;
     private ClientRequest client;
     private File[] roots;
     private JComboBox<String> comboBox = new JComboBox<>();
     private int port;
-    private JTable textTable = new JTable();
-    // Поля, к которым нужен доступ из разных методов
     private JButton ConnectDisconnect;
     private JTextField IPField;
-    private String selectedFile="",selectedDir ="";
-    private DefaultTableModel fileTableModel;  // модель таблицы для директорий
-    private JTable fileTable;
+    private String selectedFile = "",selectedDir = "";
+    private DefaultTableModel fileTableModel, clientTableModel, serverTableModel;  // модель таблицы для директорий
+    private JTable fileTable, clientTable, serverTable;
 
     public InputAdressFrame() {
         frame = new JFrame("Input address");
@@ -58,8 +58,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         panel.setBorder(new EmptyBorder(5, 5, 0, 5));
 
         panel.add(createLeftWrap());
-        panel.add(createCenterWrap("Клиентская сторона"));
-        panel.add(createCenterWrap("Серверная сторона"));
+        panel.add(createCenterWrap("Клиентская сторона", true));
+        panel.add(createCenterWrap("Серверная сторона", false));
 
         frame.add(panel);
         frame.setVisible(true);
@@ -150,7 +150,6 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 }
             }
         });
-
         JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         fileTableModel.addRow(new Object[]{".."});
@@ -232,11 +231,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         return IpPan;
     }
-
     /**
      * Создание нижней панели с кнопками
      */
-
     private JPanel createBottomPanel() {
         JPanel bottomPan = new JPanel(new GridLayout(1, 2));
         bottomPan.setBackground(Color.decode("#ECE9D8"));
@@ -313,7 +310,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     /**
      * Создание центральной обертки (для клиентской и серверной стороны)
      */
-    private JPanel createCenterWrap(String title) {
+    private JPanel createCenterWrap(String title, boolean log) {
         JPanel centerWrap = new JPanel();
         centerWrap.setBackground(Color.decode("#ECE9D8"));
 
@@ -326,15 +323,62 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         CenterPanLabel.setBackground(Color.decode("#ECE9D8"));
         CenterPanLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
-        JTextArea clientArea = new JTextArea();
-        clientArea.setBorder(BorderFactory.createBevelBorder(1));
+        // Создаём модель с двумя столбцами: 0 - текст, 1 - время
+        DefaultTableModel clientAreaModel = new DefaultTableModel(0, 2) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // запрещаем редактирование
+            }
 
-        JScrollPane clientScroll = new JScrollPane(clientArea);
+            @Override
+            public String getColumnName(int column) {
+                return "";  // убираем название столбца
+            }
+        };
 
-        clientScroll.setPreferredSize(new Dimension(260, 420));
+        JTable localTable = new JTable(clientAreaModel);
+
+        // Убираем заголовок таблицы
+        localTable.setTableHeader(null);
+
+        // Левое выравнивание для первого столбца (текст)
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        localTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+
+        // Правое выравнивание для второго столбца (время)
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        localTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+
+        // Настройка ширины столбцов (опционально)
+        localTable.getColumnModel().getColumn(0).setPreferredWidth(180);  // текст шире
+        localTable.getColumnModel().getColumn(1).setPreferredWidth(80);   // время уже
+
+        // Настройка выделения строк
+        localTable.setRowSelectionAllowed(true);
+        localTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Убираем сетку
+        localTable.setShowGrid(false);
+        localTable.setIntercellSpacing(new Dimension(0, 0));
+        localTable.setRowHeight(20);
+
+        JScrollPane scrollPane = new JScrollPane(localTable);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(260, 420));
+        scrollPane.setBorder(BorderFactory.createBevelBorder(1));
+
+        if (log) {
+            this.clientTable = localTable;
+            this.clientTableModel = clientAreaModel;
+        } else {
+            this.serverTable = localTable;
+            this.serverTableModel = clientAreaModel;
+        }
 
         centerPan.add(CenterPanLabel);
-        centerPan.add(clientScroll);
+        centerPan.add(scrollPane);
         centerWrap.add(centerPan);
 
         return centerWrap;
@@ -373,7 +417,12 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         });
         servLauncher.start();
 
-        client.addPropertyChangeListener("message", this);
+        client.addPropertyChangeListener("InClientMessage", this);
+        server.addPropertyChangeListener("InServerMessage", this);
+
+        client.addPropertyChangeListener("OutClientMessage", this);
+        server.addPropertyChangeListener("OutServerMessage", this);
+
         return true;
     }
 
@@ -403,13 +452,10 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         if (comboBox.getSelectedIndex() == -1) {return;}
         // передача серверу
         // редактируем путь и получаем от сервера следующую иерархию
-
-
         if(fileTable.getSelectedRow()!=-1) {selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);}
         else {
                 selectedFile = "";
         }
-
         if(selectedFile.equals("..") && selectedDir.length()!=3){
             selectedFile = "";
             selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
@@ -424,6 +470,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         fileTableModel.addRow(new Object[]{".."});
 
         try {
+
             client.Write(absolutePath, true);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -444,6 +491,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        updateLog(evt);
+        if(!(evt.getPropertyName().equals("InClientMessage"))){ return; }
         if(client == null) {return;}
         Cortege massage = (Cortege)evt.getNewValue();
         if(massage.isRootElement())
@@ -452,5 +501,35 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             return;
         }
         fileTableModel.addRow(new Object[]{massage.getData()});
+    }
+    public void updateLog(PropertyChangeEvent evt){
+        Cortege data = (Cortege)evt.getNewValue();
+        switch (evt.getPropertyName()){
+            case ("InClientMessage"):
+            {
+                clientTableModel.addRow(new Object[]{"Клиент полчил сообщение:", ""});
+                clientTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                break;
+            }
+            case ("OutClientMessage"):
+            {
+                clientTableModel.addRow(new Object[]{"Клиент ответил:", ""});
+                clientTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                break;
+            }
+            case ("InServerMessage"):
+            {
+                serverTableModel.addRow(new Object[]{"Сервер полчил сообщение:", ""});
+                serverTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                break;
+            }
+            case ("OutServerMessage"):
+            {
+                serverTableModel.addRow(new Object[]{"Сервер ответил:", ""});
+                serverTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                break;
+            }
+            default:
+        }
     }
 }

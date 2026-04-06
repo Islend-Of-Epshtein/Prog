@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ConnectionFrame {
+<<<<<<< HEAD
     private Process controllerProcess;
     private Process dispatcherProcess;
     private JTextField portField;
@@ -326,4 +327,7 @@ public class ConnectionFrame {
         }
         SwingUtilities.invokeLater(() -> new ConnectionFrame());
     }
+=======
+    public static void Run(){}
+>>>>>>> 2fadedf371103816113f45ae1ebf6b5ebec9d037
 }

@@ -28,12 +28,7 @@ public class ClientRequest extends Client
             while(true){
                 try {
                     String str = Read();
-                    System.out.println("Новое сообщение от сервера:" + str);
                     if (str == null) { break; }
-                    Cortege newData = new Cortege(str, LocalTime.now(), isRoot(str));
-                    messages.add(newData);
-
-                    pcs.firePropertyChange("message", messages.size() , newData);
                 }
                 catch (Exception _) {
                 }
@@ -69,5 +64,18 @@ public class ClientRequest extends Client
         super.Off();
         if(strIn!=null) { strIn.interrupt(); }
     }
-
+    @Override
+    public void Write(String str, boolean log) throws IOException {
+        Cortege newData = new Cortege(str, LocalTime.now(), isRoot(str));
+        pcs.firePropertyChange("OutClientMessage", newData.getData().length() , newData);
+        super.Write(str, true);
+    }
+    @Override
+    public String Read() throws IOException {
+        String str = getIn().readLine();
+        Cortege newData = new Cortege(str, LocalTime.now(), isRoot(str));
+        pcs.firePropertyChange("InClientMessage", str.length(), newData);
+        messages.add(newData);
+        return str;
+    }
 }

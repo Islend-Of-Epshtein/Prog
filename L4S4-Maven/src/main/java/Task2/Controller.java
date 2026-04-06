@@ -14,7 +14,6 @@ public class Controller {
         this.generator = new ProcessDataGenerator();
         this.running = true;
     }
-
     public void start() {
         System.out.println("=== КОНТРОЛЛЕР ТЕХНОЛОГИЧЕСКОГО ПРОЦЕССА ===");
         System.out.println("Ожидание подключения диспетчера на порту: " + port);
