@@ -89,19 +89,18 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         // ComboBox для выбора корневых директорий
         JPanel boxpan = new JPanel(new GridLayout(1, 1));
         boxpan.setBackground(Color.decode("#ECE9D8"));
-        comboBox.addActionListener(e -> {
+        comboBox.addActionListener(_ -> {
             if (comboBox.getSelectedItem() != null) {
                 selectedDir = (String) comboBox.getSelectedItem();
                 fileTableModel.setRowCount(0);
-                int count = comboBox.getComponentCount();
-                for(int i=0; i<count;i++){
-                    if(selectedDir.length()<comboBox.getItemAt(i).length()){
-                        comboBox.remove(i);
-                        count -=1;
+                for (int i = comboBox.getItemCount() - 1; i >= 0; i--) {
+                    String item = comboBox.getItemAt(i);
+                    if (selectedDir.length() < item.length()) {
+                        comboBox.removeItemAt(i);
                     }
                 }
                 fileTableModel.addRow(new Object[]{".."});  // кнопка "наверх"
-                serverRequest();
+                serverWrite(selectedDir);
                 fileTable.requestFocusInWindow();
             }
         });
@@ -148,7 +147,6 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        fileTableModel.addRow(new Object[]{".."});  // начальная строка "наверх"
         scrollPane.setPreferredSize(new Dimension(0, 300));
         tablePan.add(scrollPane);
         filepan.add(tablePan);
@@ -166,7 +164,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         IPField.setText("localhost");
 
         ConnectDisconnect = CreateButton("Подключиться", new Dimension(100, 25));
-        ConnectDisconnect.addActionListener(e -> {
+        ConnectDisconnect.addActionListener(_ -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
                     if(connectServer(IPField.getText())){ return;}
@@ -205,7 +203,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         bottomPan.setBackground(Color.decode("#ECE9D8"));
 
         JButton TurnOnOff = CreateButton("  Включить Сервер  ", new Dimension(130, 25));
-        TurnOnOff.addActionListener(e -> {
+        TurnOnOff.addActionListener(_ -> {
             if (TurnOnOff.getText().equals("  Включить Сервер  ")) {
                 try {
                     server = new FileServer(port);
@@ -231,7 +229,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         });
 
         JButton exitBtn = CreateButton("Выход", new Dimension(80, 25));
-        exitBtn.addActionListener(e -> {
+        exitBtn.addActionListener(_ -> {
             try {
                 if(client!=null){ client.Off(); }
                 if(server!=null){ server.Off(); }
@@ -265,8 +263,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         serverTransfer.setFocusable(false);
         clientTransfer.setFocusable(false);
 
-        clientTransfer.addActionListener(e -> {});
-        serverTransfer.addActionListener(e -> {
+        clientTransfer.addActionListener(_ -> {});
+        serverTransfer.addActionListener(_ -> {
             if(client!=null) {serverRequest(); }
         });
 
@@ -420,35 +418,42 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     private void serverRequest(){
         if (comboBox.getSelectedIndex() == -1) {return;}
 
-        String selectedFile = "";
+        String selectedFile = "", dir = selectedDir.substring(0,3);
+
         if(fileTable.getSelectedRow()!=-1) {
             selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);
         }
 
-        // обработка перехода на уровень выше ("..")
-        if(selectedFile.equals("..") && selectedDir.length()!=3){
+        // обработка перехода на уровень ниже ("..")
+        if(selectedFile.equals("..") && selectedDir.length()>3){
             selectedFile = "";
             selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
-            selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
+            selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\")+1);
+            if(selectedDir.indexOf('\\', 3) > 1) { comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getItemCount()-2)); }
+            else {
+                for (int i = comboBox.getItemCount() - 1; i >= 0; i--) {
+                    String item = comboBox.getItemAt(i);
+                    if (item.equals(dir)) {
+                        comboBox.setSelectedItem(comboBox.getItemAt(i));
+                    }
+                }
+            }
         }
+        if (selectedFile.equals("..")) {return;}
 
-        String absolutePath = selectedDir + selectedFile;
-        if(!selectedFile.equals("")){
+        if(!selectedFile.isEmpty()){
             selectedDir = selectedDir + selectedFile + '\\';
+            comboBox.addItem(selectedDir);
+            comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getItemCount()-1));
         }
-
 
         fileTableModel.setRowCount(0);
         fileTableModel.addRow(new Object[]{".."});  // добавляем "наверх"
 
+    }
+    private void serverWrite(String absolutePath){
         try {
-            if(!absolutePath.endsWith("..")) { comboBox.addItem(selectedDir); }
-            else{
-                if(comboBox.getItemCount()>1) {
-                    comboBox.remove(comboBox.getItemCount() - 1);
-                }
-            }
-            comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getItemCount()-1));
+
             client.Write(absolutePath, true);  // отправляем путь на сервер
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Ошибка передачи от клиента: " + ex);

@@ -6,8 +6,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.time.*;
 
 import static Task1.Cortege.isRoot;
@@ -16,7 +14,7 @@ import static Task1.Cortege.isRoot;
 public class ClientRequest extends Client
 {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);  // поддержка событий
-    private final List<Cortege> messages = new ArrayList<>();  // хранилище полученных сообщений
+    //private final List<Cortege> messages = new ArrayList<>();  // хранилище полученных сообщений
     private Thread strIn;          // поток для чтения сообщений от сервера
     private volatile boolean running = true;  // флаг работы потока
 
@@ -76,14 +74,14 @@ public class ClientRequest extends Client
     @Override
     public String Read() throws IOException {
         String str = getIn().readLine();  // читаем строку
-        String[] array = str.split(" ");  // разбиваем по пробелам
+        String[] array = str.split(" {2}");  // разбиваем по пробелам
         Cortege newData = new Cortege(str, LocalDateTime.now(), isRoot(str));
         pcs.firePropertyChange("InClientMessage", 1, newData);
 
         // Для каждого слова создаём отдельное событие
         for(String arr : array){
             Cortege arrData = new Cortege(arr, LocalDateTime.now(), isRoot(arr));
-            messages.add(arrData);
+            //messages.add(arrData);
             pcs.firePropertyChange("InClientMessage", null, arrData);
         }
         return str;

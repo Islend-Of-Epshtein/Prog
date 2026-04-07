@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static Task1.Cortege.isRoot;
 
@@ -69,12 +68,12 @@ public class FileServer extends Server
                     }
 
                     // Формируем ответ (список файлов через пробел)
-                    String res = "";
+                    StringBuilder res = new StringBuilder();
                     assert result != null;
                     for(var f : result){
-                        res = res + " " + f;
+                        res.append("  ").append(f);
                     }
-                    Write(res, true);  // отправляем ответ клиенту
+                    Write(res.toString(), true);  // отправляем ответ клиенту
                 }
                 catch (Exception _) {
                 }
@@ -88,11 +87,11 @@ public class FileServer extends Server
     public void Accept() throws IOException, ClassNotFoundException {
         super.Accept();
         if(this.IsBound()){
-            String str = "";
+            StringBuilder str = new StringBuilder();
             for(var root : File.listRoots()){
-                str = str + " " + root.toString();
-                super.Write(root.toString(), true);  // отправляем каждый корневой диск
+                str.append("  ").append(root.toString());
             }
+            Write(str.toString(), true);
         }
     }
 
