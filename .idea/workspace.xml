@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Мелкие правки, сборка Maven">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Cortege.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Cortege.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,6 +25,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="L4S4" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
@@ -64,7 +70,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "L4S4",
+    "git-widget-placeholder": "L4S4-ASTAPCHUCK",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15917969",
@@ -175,5 +181,16 @@
     <MESSAGE value="Общение сервера клиента" />
     <MESSAGE value="Мелкие правки, сборка Maven" />
     <option name="LAST_COMMIT_MESSAGE" value="Мелкие правки, сборка Maven" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java</url>
+          <line>98</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

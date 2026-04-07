@@ -1,15 +1,16 @@
 package Task1;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class Cortege
 {
     private final String data;
-    private final LocalTime time;
+    private final LocalDateTime time;
     private final boolean root;
-    public Cortege(String data, LocalTime time, boolean root){
+    public Cortege(String data, LocalDateTime time, boolean root){
         this.time = time;
         this.data = data;
         this.root = root;
@@ -23,6 +24,6 @@ public class Cortege
         return false;
     }
     public String getData(){ return data; }
-    public String getTime(){ return time.format(DateTimeFormatter.ofPattern("HH:mm:ss")); }
+    public String getTime(){ return time.format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss")); }
     public boolean isRootElement(){ return root; }
 }

@@ -16,11 +16,13 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
+// Главное окно приложения
 public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     private final JFrame frame;
     private FileServer server;
@@ -29,8 +31,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     private int port;
     private JButton ConnectDisconnect;
     private JTextField IPField;
-    private String selectedDir = "";
-    private DefaultTableModel fileTableModel, clientTableModel, serverTableModel;  // модель таблицы для директорий
+    private String selectedDir = "";  // текущая выбранная директория
+    private DefaultTableModel fileTableModel, clientTableModel, serverTableModel;  // модели таблиц
     private JTable fileTable;
 
     public InputAdressFrame() {
@@ -40,7 +42,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         frame.setBackground(Color.decode("#081421"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try{
-            port = getPort();
+            port = getPort();  // выбор порта через диалог
         }
         catch (Exception e){
             JOptionPane.showMessageDialog(this, "Ошибка порта: порт не выбран" );
@@ -49,22 +51,21 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         initElements();
     }
 
+    // Инициализация всех элементов интерфейса
     public void initElements() {
         JPanel panel = new JPanel(new GridLayout(1, 3));
         panel.setBackground(Color.decode("#ECE9D8"));
         panel.setBorder(new EmptyBorder(5, 5, 0, 5));
 
-        panel.add(createLeftWrap());
-        panel.add(createCenterWrap("Клиентская сторона", true));
-        panel.add(createCenterWrap("Серверная сторона", false));
+        panel.add(createLeftWrap());                           // левая панель с файлами
+        panel.add(createCenterWrap("Клиентская сторона", true));   // центр - клиент
+        panel.add(createCenterWrap("Серверная сторона", false));   // центр - сервер
 
         frame.add(panel);
         frame.setVisible(true);
     }
 
-    /**
-     * Создание левой обертки
-     */
+    // Левая панель (ComboBox + таблица + кнопки)
     private JPanel createLeftWrap() {
         JPanel leftWrap = new JPanel();
         leftWrap.setBackground(Color.decode("#ECE9D8"));
@@ -72,29 +73,35 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         JPanel leftPan = new JPanel();
         leftPan.setLayout(new BoxLayout(leftPan, BoxLayout.Y_AXIS));
 
-        leftPan.add(createFilePanel());
-        leftPan.add(createTransferPanel());
+        leftPan.add(createFilePanel());    // панель с файловой таблицей
+        leftPan.add(createTransferPanel()); // панель с кнопками передачи
 
         leftWrap.add(leftPan);
         return leftWrap;
     }
 
-    /**
-     * Создание панели с файлами (ComboBox + TextArea + IP + Bottom)
-     */
+    // Панель с ComboBox и таблицей директорий
     private JPanel createFilePanel() {
         JPanel filepan = new JPanel();
         filepan.setBackground(Color.decode("#ECE9D8"));
         filepan.setLayout(new BoxLayout(filepan, BoxLayout.Y_AXIS));
 
-        // ComboBox панель
+        // ComboBox для выбора корневых директорий
         JPanel boxpan = new JPanel(new GridLayout(1, 1));
         boxpan.setBackground(Color.decode("#ECE9D8"));
         comboBox.addActionListener(e -> {
             if (comboBox.getSelectedItem() != null) {
                 selectedDir = (String) comboBox.getSelectedItem();
                 fileTableModel.setRowCount(0);
-                fileTableModel.addRow(new Object[]{".."});
+                int count = comboBox.getComponentCount();
+                for(int i=0; i<count;i++){
+                    if(selectedDir.length()<comboBox.getItemAt(i).length()){
+                        comboBox.remove(i);
+                        count -=1;
+                    }
+                }
+                fileTableModel.addRow(new Object[]{".."});  // кнопка "наверх"
+                serverRequest();
                 fileTable.requestFocusInWindow();
             }
         });
@@ -102,120 +109,85 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         boxpan.add(comboBox);
         filepan.add(boxpan);
 
-        // Таблица для отображения директорий
+        // Таблица для отображения содержимого директории
         JPanel tablePan = new JPanel(new GridLayout(1, 1));
         tablePan.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-        // Создаём модель таблицы с одним столбцом
+        // Модель таблицы (один столбец, без заголовка)
         fileTableModel = new DefaultTableModel(0, 1) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;  // запрещаем редактирование
+                return false;
             }
-
             @Override
             public String getColumnName(int column) {
-                return "";  // убираем название столбца
+                return "";
             }
         };
 
         fileTable = new JTable(fileTableModel);
+        fileTable.setTableHeader(null);                    // скрываем заголовок
+        fileTable.setRowSelectionAllowed(true);            // разрешаем выделение строк
+        fileTable.setShowGrid(false);                      // убираем сетку
+        fileTable.setRowHeight(20);                        // высота строки
 
-        // Убираем заголовок таблицы
-        fileTable.setTableHeader(null);
-
-        // Левое выравнивание содержимого
+        // Левое выравнивание
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
         fileTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
 
-        // Настройка выделения строк
-        fileTable.setRowSelectionAllowed(true);
-        fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Убираем сетку
-        fileTable.setShowGrid(false);
-        fileTable.setIntercellSpacing(new Dimension(0, 0));
-        fileTable.setRowHeight(20);
-
-        // Обработка двойного клика
+        // Двойной клик по строке - запрос содержимого директории
         fileTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && client!=null) {
-                    serverRequest();
+                    serverRequest();  // отправляем запрос на сервер
                 }
             }
         });
+
         JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        fileTableModel.addRow(new Object[]{".."});
+        fileTableModel.addRow(new Object[]{".."});  // начальная строка "наверх"
         scrollPane.setPreferredSize(new Dimension(0, 300));
         tablePan.add(scrollPane);
         filepan.add(tablePan);
 
-        // IP панель
-        filepan.add(createIpPanel());
-
-        // Bottom панель
-        filepan.add(createBottomPanel());
+        filepan.add(createIpPanel());     // панель с IP и кнопкой подключения
+        filepan.add(createBottomPanel()); // нижняя панель с кнопками
 
         return filepan;
     }
 
-    /**
-     * Создание панели с IP адресом и кнопкой подключения
-     */
+    // Панель для ввода IP адреса и кнопки подключения
     private JPanel createIpPanel() {
         JLabel address = new JLabel("IP-aдрес:");
-
         IPField = new JTextField(9);
-
-        IPField.setDocument(new javax.swing.text.PlainDocument() {
-            @Override
-            public void insertString(int offs, String str, javax.swing.text.AttributeSet a)
-                    throws javax.swing.text.BadLocationException {
-                if (str == null)
-                    return;
-                String currentText = getText(0, getLength());
-                int newLength = currentText.length() + str.length();
-                if (newLength <= 15) {
-                    super.insertString(offs, str, a);
-                }
-            }
-        });
         IPField.setText("localhost");
+
         ConnectDisconnect = CreateButton("Подключиться", new Dimension(100, 25));
         ConnectDisconnect.addActionListener(e -> {
             if (ConnectDisconnect.getText().equals("Подключиться")) {
                 try {
                     if(connectServer(IPField.getText())){ return;}
+                    // логируем успешное подключение
+                    serverTableModel.addRow(new Object[]{"Клиент соеденился", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss"))});
                     ConnectDisconnect.setText("  Отключиться  ");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
                 }
             } else {
+                // отключение клиента
                 try {
                     client.removePropertyChangeListener(this);
                     client.Off();
                     client = null;
+                    serverTableModel.addRow(new Object[]{"Клиент отключился", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss"))});
                     ConnectDisconnect.setText("Подключиться");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка отключния: "+ ex);
                 }
             }
-        });
-
-        IPField.addActionListener(e -> {
-            if (ConnectDisconnect.getText().equals("Подключиться")) {
-                try {
-                    if(connectServer(IPField.getText())){ return;}
-                    ConnectDisconnect.setText("  Отключиться  ");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Ошибка подключения: "+ ex);
-                }
-            }
-            IPField.transferFocus();
         });
 
         JPanel IpPan = new JPanel();
@@ -226,9 +198,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         return IpPan;
     }
-    /**
-     * Создание нижней панели с кнопками
-     */
+
+    // Нижняя панель (включение/выключение сервера и выход)
     private JPanel createBottomPanel() {
         JPanel bottomPan = new JPanel(new GridLayout(1, 2));
         bottomPan.setBackground(Color.decode("#ECE9D8"));
@@ -238,23 +209,24 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             if (TurnOnOff.getText().equals("  Включить Сервер  ")) {
                 try {
                     server = new FileServer(port);
+                    serverTableModel.addRow(new Object[]{"Сервер включен", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss"))});
                     TurnOnOff.setText("Выключить Сервер");
                 }
                 catch (Exception ex){
-                     JOptionPane.showMessageDialog(this, "Ошибка включения: "+ ex);
+                    JOptionPane.showMessageDialog(this, "Ошибка включения: "+ ex);
                 }
-
             } else {
+                // выключение сервера
                 try {
                     server.removePropertyChangeListener(this);
                     server.Off();
                     server = null;
                     serverTableModel.setRowCount(0);
+                    serverTableModel.addRow(new Object[]{"Сервер выключен", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss"))});
                     TurnOnOff.setText("  Включить Сервер  ");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Ошибка выключения: "+ ex);
                 }
-
             }
         });
 
@@ -281,9 +253,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         return bottomPan;
     }
-    /**
-     * Создание панели передачи данных
-     */
+
+    // Панель с кнопками передачи данных (заглушки)
     private JPanel createTransferPanel() {
         JPanel transferPan = new JPanel();
         transferPan.setBackground(Color.decode("#ECE9D8"));
@@ -294,8 +265,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         serverTransfer.setFocusable(false);
         clientTransfer.setFocusable(false);
 
-        clientTransfer.addActionListener(e -> {
-        });
+        clientTransfer.addActionListener(e -> {});
         serverTransfer.addActionListener(e -> {
             if(client!=null) {serverRequest(); }
         });
@@ -306,9 +276,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         return transferPan;
     }
 
-    /**
-     * Создание центральной обертки (для клиентской и серверной стороны)
-     */
+    // Центральные панели (клиентская и серверная) с таблицами логов
     private JPanel createCenterWrap(String title, boolean log) {
         JPanel centerWrap = new JPanel();
         centerWrap.setBackground(Color.decode("#ECE9D8"));
@@ -322,46 +290,37 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         CenterPanLabel.setBackground(Color.decode("#ECE9D8"));
         CenterPanLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
-        // Создаём модель с двумя столбцами: 0 - текст, 1 - время
+        // Модель с двумя столбцами: текст сообщения и время
         DefaultTableModel clientAreaModel = new DefaultTableModel(0, 2) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;  // запрещаем редактирование
+                return false;
             }
-
             @Override
             public String getColumnName(int column) {
-                return "";  // убираем название столбца
+                return "";
             }
         };
 
         JTable localTable = new JTable(clientAreaModel);
+        localTable.setTableHeader(null);      // скрываем заголовок
+        localTable.setRowSelectionAllowed(true);
+        localTable.setShowGrid(false);
+        localTable.setRowHeight(20);
 
-        // Убираем заголовок таблицы
-        localTable.setTableHeader(null);
-
-        // Левое выравнивание для первого столбца (текст)
+        // левое выравнивание для текста
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
         localTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
 
-        // Правое выравнивание для второго столбца (время)
+        // правое выравнивание для времени
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
         localTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
 
-        // Настройка ширины столбцов (опционально)
-        localTable.getColumnModel().getColumn(0).setPreferredWidth(180);  // текст шире
-        localTable.getColumnModel().getColumn(1).setPreferredWidth(80);   // время уже
-
-        // Настройка выделения строк
-        localTable.setRowSelectionAllowed(true);
-        localTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Убираем сетку
-        localTable.setShowGrid(false);
-        localTable.setIntercellSpacing(new Dimension(0, 0));
-        localTable.setRowHeight(20);
+        // настройка ширины
+        localTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        localTable.getColumnModel().getColumn(1).setPreferredWidth(110);
 
         JScrollPane scrollPane = new JScrollPane(localTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -369,9 +328,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         scrollPane.setBorder(BorderFactory.createBevelBorder(1));
 
         if (log) {
-            this.clientTableModel = clientAreaModel;
+            this.clientTableModel = clientAreaModel;  // для клиентской стороны
         } else {
-            this.serverTableModel = clientAreaModel;
+            this.serverTableModel = clientAreaModel;  // для серверной стороны
         }
 
         centerPan.add(CenterPanLabel);
@@ -381,29 +340,38 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         return centerWrap;
     }
 
+    // Разбивает длинную строку на части фиксированной длины (для переноса в таблице)
+    public static List<String> splitByLength(String text, int chunkLength) {
+        List<String> chunks = new ArrayList<>();
+        for (int i = 0; i < text.length(); i += chunkLength) {
+            int end = Math.min(i + chunkLength, text.length());
+            chunks.add(text.substring(i, end));
+        }
+        return chunks;
+    }
+
     public static void Run() {
         new InputAdressFrame();
     }
 
+    // Подключение к серверу
     private boolean connectServer(String address) throws IOException
     {
         if (server == null) {
             JOptionPane.showMessageDialog(this, "Ошибка подключения: Сервер недоступен");
             return true;
         }
-
         if (Objects.equals(address, "")) {
             return true;
         }
 
-        // клиент
+        // создаём клиента
         client = new ClientRequest(new InetSocketAddress(address, port).getAddress(), port);
         clientTableModel.setRowCount(0);
         comboBox.removeAllItems();
-        // поток прослушивания
-        client.clientStringThread();
+        client.clientStringThread();  // запускаем поток чтения сообщений
 
-        // сервер в отдельном потоке
+        // запускаем сервер в отдельном потоке
         Thread servLauncher = new Thread(() -> {
             try {
                 server.Accept();
@@ -414,17 +382,17 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             }
         });
         servLauncher.start();
+        server.serverStringThread();  // поток чтения на сервере
 
-        server.serverStringThread();
-
+        // подписываемся на события
         client.addPropertyChangeListener("InClientMessage", this);
         server.addPropertyChangeListener("InServerMessage", this);
-
         client.addPropertyChangeListener("OutClientMessage", this);
         server.addPropertyChangeListener("OutServerMessage", this);
         return false;
     }
 
+    // Выбор свободного порта через диалог
     private int getPort() throws IOException {
         List<ServerSocket> sockets = new ArrayList<>();
         Integer[] freeport = new Integer[6];
@@ -438,25 +406,26 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         }
         freeport[5]=0;
         return (Integer) JOptionPane.showInputDialog(
-                frame,                          // родительский компонент
-                "Выберите порт:",                // сообщение
-                "Порт соединения",               // заголовок
-                JOptionPane.QUESTION_MESSAGE,   // тип сообщения
-                null,                           // иконка
-                freeport,                        // массив вариантов
-                freeport[0]                      // значение по умолчанию
+                frame,
+                "Выберите порт:",
+                "Порт соединения",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                freeport,
+                freeport[0]
         );
     }
+
+    // Отправка запроса на сервер для получения содержимого директории
     private void serverRequest(){
         if (comboBox.getSelectedIndex() == -1) {return;}
-        // передача серверу
-        // редактируем путь и получаем от сервера следующую иерархию
+
         String selectedFile = "";
         if(fileTable.getSelectedRow()!=-1) {
-            selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);}
-        else {
-                selectedFile = "";
+            selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);
         }
+
+        // обработка перехода на уровень выше ("..")
         if(selectedFile.equals("..") && selectedDir.length()!=3){
             selectedFile = "";
             selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
@@ -464,18 +433,29 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         }
 
         String absolutePath = selectedDir + selectedFile;
+        if(!selectedFile.equals("")){
+            selectedDir = selectedDir + selectedFile + '\\';
+        }
 
-        selectedDir = selectedDir + selectedFile + '\\';
 
         fileTableModel.setRowCount(0);
-        fileTableModel.addRow(new Object[]{".."});
+        fileTableModel.addRow(new Object[]{".."});  // добавляем "наверх"
 
         try {
-            client.Write(absolutePath, true);
+            if(!absolutePath.endsWith("..")) { comboBox.addItem(selectedDir); }
+            else{
+                if(comboBox.getItemCount()>1) {
+                    comboBox.remove(comboBox.getItemCount() - 1);
+                }
+            }
+            comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getItemCount()-1));
+            client.Write(absolutePath, true);  // отправляем путь на сервер
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка передачи от клианта: " + ex);
+            JOptionPane.showMessageDialog(this, "Ошибка передачи от клиента: " + ex);
         }
     }
+
+    // Вспомогательный метод для создания кнопок
     public static JButton CreateButton(String text, Dimension size) {
         JButton button = new JButton(text);
         button.setBackground(Color.decode("#eeeeee"));
@@ -489,44 +469,66 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         return button;
     }
 
+    // Обработка событий изменения свойств (PropertyChangeListener)
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        updateLog(evt);
-        if(!(evt.getPropertyName().equals("InClientMessage"))){ return; }
+        updateLog(evt);  // обновляем логи клиента/сервера
+
+        // обрабатываем только входящие сообщения клиента с новыми данными
+        if(!(evt.getPropertyName().equals("InClientMessage")) || evt.getOldValue()!=null){ return; }
         if(client == null) {return;}
+
         Cortege massage = (Cortege)evt.getNewValue();
+
+        // корневые элементы добавляем в ComboBox
         if(massage.isRootElement())
         {
             comboBox.addItem(massage.getData());
             return;
         }
+        // пропускаем null, пустые строки и ".."
+        if(massage.getData() == null || massage.getData().trim().isEmpty() || massage.getData().equals("..")) {
+            return;
+        }
+        // добавляем элемент в файловую таблицу
         fileTableModel.addRow(new Object[]{massage.getData()});
     }
+
+    // Обновление логов в центральных таблицах
     public void updateLog(PropertyChangeEvent evt){
         Cortege data = (Cortege)evt.getNewValue();
         switch (evt.getPropertyName()){
             case ("InClientMessage"):
             {
-                clientTableModel.addRow(new Object[]{"Клиент полчил сообщение:", ""});
-                clientTableModel.addRow(new Object[]{data.getData(), data.getTime()});
-                break;
-            }
-            case ("OutClientMessage"):
-            {
-                clientTableModel.addRow(new Object[]{"Клиент отправил:", ""});
-                clientTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                if (evt.getOldValue()!=null) {
+                    clientTableModel.addRow(new Object[]{"Клиент получил ответ:", ""});
+                    int i = 1;
+                    // разбиваем длинное сообщение на строки
+                    for(String str: splitByLength(data.getData(), 40)){
+                        if (i == 1) {
+                            clientTableModel.addRow(new Object[]{str, data.getTime()});
+                            i = 0;
+                        } else {
+                            clientTableModel.addRow(new Object[]{str, ""});
+                        }
+                    }
+                }
                 break;
             }
             case ("InServerMessage"):
             {
-                serverTableModel.addRow(new Object[]{"Сервер полчил сообщение:", ""});
-                serverTableModel.addRow(new Object[]{data.getData(), data.getTime()});
-                break;
-            }
-            case ("OutServerMessage"):
-            {
-                serverTableModel.addRow(new Object[]{"Сервер ответил:", ""});
-                serverTableModel.addRow(new Object[]{data.getData(), data.getTime()});
+                if (evt.getOldValue()!=null) {
+                    serverTableModel.addRow(new Object[]{"Сервер получил:", ""});
+                    int i = 1;
+                    for(String str: splitByLength(data.getData(), 50)){
+                        if (i == 1) {
+                            serverTableModel.addRow(new Object[]{str, data.getTime()});
+                            i = 0;
+                        } else {
+                            serverTableModel.addRow(new Object[]{str, ""});
+                        }
+                    }
+                }
                 break;
             }
             default:
