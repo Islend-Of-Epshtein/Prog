@@ -6,6 +6,7 @@ import Task1.FileServer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -49,6 +51,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             frame.dispose();
         }
         initElements();
+        ConnectDisconnect.requestFocus();
     }
 
     // Инициализация всех элементов интерфейса
@@ -89,6 +92,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         // ComboBox для выбора корневых директорий
         JPanel boxpan = new JPanel(new GridLayout(1, 1));
         boxpan.setBackground(Color.decode("#ECE9D8"));
+        comboBox.setPreferredSize(new Dimension(290, 25));
         comboBox.addActionListener(_ -> {
             if (comboBox.getSelectedItem() != null) {
                 selectedDir = (String) comboBox.getSelectedItem();
@@ -105,6 +109,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 fileTable.requestFocusInWindow();
             }
         });
+
         boxpan.setBorder(new EmptyBorder(0, 5, 10, 5));
         boxpan.add(comboBox);
         filepan.add(boxpan);
@@ -124,17 +129,18 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 return "";
             }
         };
-
         fileTable = new JTable(fileTableModel);
         fileTable.setTableHeader(null);                    // скрываем заголовок
         fileTable.setRowSelectionAllowed(true);            // разрешаем выделение строк
         fileTable.setShowGrid(false);                      // убираем сетку
         fileTable.setRowHeight(20);                        // высота строки
 
+
         // Левое выравнивание
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
         fileTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+
 
         // Двойной клик по строке - запрос содержимого директории
         fileTable.addMouseListener(new MouseAdapter() {
@@ -148,7 +154,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         JScrollPane scrollPane = new JScrollPane(fileTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(0, 300));
+
+        scrollPane.setPreferredSize(new Dimension(290, 300));
         tablePan.add(scrollPane);
         filepan.add(tablePan);
 
@@ -423,6 +430,9 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
 
         if(fileTable.getSelectedRow()!=-1) {
             selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);
+            if (!selectedFile.equals("..")&& !selectedFile.equals(".")){
+                selectedFile= selectedFile.substring(3);
+            }
         }
 
         // обработка перехода на уровень корня ("..")
@@ -508,10 +518,21 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         if(massage.getData() == null || massage.getData().trim().isEmpty() || massage.getData().equals("..")) {
             return;
         }
-        // добавляем элемент в файловую таблицу
-        fileTableModel.addRow(new Object[]{massage.getData()});
-    }
 
+        File file = new File(selectedDir + '\\' + massage.getData());
+        String displayName;
+        //JOptionPane.showMessageDialog(this, "<"+file.getName()+">");
+        if (file.isDirectory()) {
+            displayName = "📁 " + massage.getData();
+        } else if (file.getName().endsWith(".txt")) {
+            displayName = "📄 " + massage.getData();
+        } else if (file.getName().endsWith(".exe")) {
+            displayName = "⚙️ " + massage.getData();
+        } else {
+            displayName = "📎 " + massage.getData();
+        }
+        fileTableModel.addRow(new Object[]{displayName});
+    }
     // Обновление логов в центральных таблицах
     public void updateLog(PropertyChangeEvent evt){
         Cortege data = (Cortege)evt.getNewValue();
