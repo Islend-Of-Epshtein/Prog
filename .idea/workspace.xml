@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Мелкие правки, сборка Maven">
+    <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Доделал логику по комментариям Виктора Андреевича">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,12 +36,12 @@
     &quot;assignee&quot;: &quot;Infinity123low&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Islend-Of-Epshtein/Prog&quot;,
-    &quot;accountId&quot;: &quot;51e89c3d-e5cc-4a4b-bdb4-b331a1d5fc70&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Islend-Of-Epshtein/Prog",
+    "accountId": "049551d3-67bc-465f-88a2-38f7a8803466"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -55,27 +53,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Controller.executor": "Run",
-    "Application.Dispatcher.executor": "Run",
-    "Application.DispatcherGUI.executor": "Run",
-    "Application.Launcher.executor": "Run",
-    "Application.SelectTask.executor": "Run",
-    "Application.SelectTaskFrame.executor": "Run",
-    "Application.Task3.gui.Launcher.executor": "Run",
-    "Maven.L4S4-Maven [clean].executor": "Run",
-    "Maven.L4S4-Maven [package].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "L4S4-ASTAPCHUCK",
-    "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.15917969",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Controller.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Dispatcher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.DispatcherGUI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.SelectTask.executor&quot;: &quot;Run&quot;,
+    &quot;Application.SelectTaskFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Task3.gui.Launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.L4S4-Maven [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.L4S4-Maven [package].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;L4S4-ASTAPCHUCK&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15917969&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="SelectTask" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SelectTaskMenu" />
@@ -84,6 +82,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="Структура заданий">
@@ -157,7 +162,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775503511190</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Доделал логику по комментариям Виктора Андреевича">
+      <option name="closed" value="true" />
+      <created>1775581734804</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1775581734804</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -179,6 +192,8 @@
     <MESSAGE value="Начал делать Model-Task1: Реализовал подключение сервера и клиента." />
     <MESSAGE value="Общение сервера клиента" />
     <MESSAGE value="Мелкие правки, сборка Maven" />
-    <option name="LAST_COMMIT_MESSAGE" value="Мелкие правки, сборка Maven" />
+    <MESSAGE value="Manifest для сборки" />
+    <MESSAGE value="Доделал логику по комментариям Виктора Андреевича" />
+    <option name="LAST_COMMIT_MESSAGE" value="Доделал логику по комментариям Виктора Андреевича" />
   </component>
 </project>

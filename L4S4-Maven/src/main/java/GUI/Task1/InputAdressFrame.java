@@ -99,6 +99,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                         comboBox.removeItemAt(i);
                     }
                 }
+                fileTableModel.addRow(new Object[]{"."});
                 fileTableModel.addRow(new Object[]{".."});  // кнопка "наверх"
                 serverWrite(selectedDir);
                 fileTable.requestFocusInWindow();
@@ -424,7 +425,18 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             selectedFile = (String)fileTableModel.getValueAt(fileTable.getSelectedRow(), 0);
         }
 
-        // обработка перехода на уровень ниже ("..")
+        // обработка перехода на уровень корня ("..")
+        if(selectedFile.equals(".")){
+            selectedFile = "";
+            for (int i = comboBox.getItemCount() - 1; i >= 0; i--) {
+                String item = comboBox.getItemAt(i);
+                if (item.equals(dir)) {
+                    comboBox.setSelectedItem(item);
+                }
+            }
+        }
+
+        // обработка перехода на уровень выше ("..")
         if(selectedFile.equals("..") && selectedDir.length()>3){
             selectedFile = "";
             selectedDir = selectedDir.substring(0, selectedDir.lastIndexOf("\\"));
@@ -448,6 +460,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         }
 
         fileTableModel.setRowCount(0);
+        fileTableModel.addRow(new Object[]{"."});
         fileTableModel.addRow(new Object[]{".."});  // добавляем "наверх"
 
     }
