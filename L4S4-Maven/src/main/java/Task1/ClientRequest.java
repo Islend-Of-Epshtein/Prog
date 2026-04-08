@@ -74,15 +74,17 @@ public class ClientRequest extends Client
     @Override
     public String Read() throws IOException {
         String str = getIn().readLine();  // читаем строку
-        String[] array = str.split(" {2}");  // разбиваем по пробелам
-        Cortege newData = new Cortege(str, LocalDateTime.now(), isRoot(str));
-        pcs.firePropertyChange("InClientMessage", 1, newData);
+        if(str!=null) {
+            String[] array = str.split(" {2}");  // разбиваем по пробелам
+            Cortege newData = new Cortege(str, LocalDateTime.now(), isRoot(str));
+            pcs.firePropertyChange("InClientMessage", 1, newData);
 
-        // Для каждого слова создаём отдельное событие
-        for(String arr : array){
-            Cortege arrData = new Cortege(arr, LocalDateTime.now(), isRoot(arr));
-            //messages.add(arrData);
-            pcs.firePropertyChange("InClientMessage", null, arrData);
+            // Для каждого слова создаём отдельное событие
+            for (String arr : array) {
+                Cortege arrData = new Cortege(arr, LocalDateTime.now(), isRoot(arr));
+                //messages.add(arrData);
+                pcs.firePropertyChange("InClientMessage", null, arrData);
+            }
         }
         return str;
     }

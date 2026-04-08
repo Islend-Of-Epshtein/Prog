@@ -55,6 +55,13 @@ public class FileServer extends Server
                         result = file.list();
                     }
 
+                    // Запуск exe
+                    if(file.getName().endsWith(".exe") ||file.getName().endsWith(".exe\\")){
+                        System.out.println(file);
+                         ProcessBuilder pcb =  new ProcessBuilder("cmd.exe", "/c", "start", file.toString());
+                         pcb.start();
+                         continue;
+                    }
                     // Если это файл - читаем его содержимое
                     if(file.isFile()){
                         if (result != null) {
@@ -103,13 +110,17 @@ public class FileServer extends Server
             running = false;    // останавливаем цикл
             pathIn.interrupt(); // прерываем поток
         }
+
     }
 
     // Отправка строки с генерацией события
     @Override
     public void Write(String str, boolean log) throws IOException {
-        Cortege newData = new Cortege(str, LocalDateTime.now(), isRoot(str));
-        pcs.firePropertyChange("OutServerMessage", newData.getData().length(), newData);
+        if(str!=null)
+        {
+            Cortege newData = new Cortege(str, LocalDateTime.now(), isRoot(str));
+            pcs.firePropertyChange("OutServerMessage", newData.getData().length(), newData);
+        }
         super.Write(str, log);
     }
 

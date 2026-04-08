@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="Доделал логику по комментариям Виктора Андреевича">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,12 +37,12 @@
     &quot;assignee&quot;: &quot;Infinity123low&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Islend-Of-Epshtein/Prog",
-    "accountId": "049551d3-67bc-465f-88a2-38f7a8803466"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Islend-Of-Epshtein/Prog&quot;,
+    &quot;accountId&quot;: &quot;049551d3-67bc-465f-88a2-38f7a8803466&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
