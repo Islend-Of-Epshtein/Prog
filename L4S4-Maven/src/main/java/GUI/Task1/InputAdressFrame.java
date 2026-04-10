@@ -6,7 +6,6 @@ import Task1.FileServer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -36,10 +35,12 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     private String selectedDir = "";  // текущая выбранная директория
     private DefaultTableModel fileTableModel, clientTableModel, serverTableModel;  // модели таблиц
     private JTable fileTable;
+    private final int logFrameLengthTextInRow = 145, logFrameLengthTimeInRow =115, charLenghtInPx = 7;
 
     public InputAdressFrame() {
-        frame = new JFrame("Input address");
+        frame = new JFrame("GxpExplorer");
         frame.setSize(900, 500);
+        frame.setIconImage(new ImageIcon("FileManagerLogo.png").getImage());
         frame.setLocationRelativeTo(null);
         frame.setBackground(Color.decode("#081421"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -271,7 +272,10 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         serverTransfer.setFocusable(false);
         clientTransfer.setFocusable(false);
 
-        clientTransfer.addActionListener(_ -> {});
+        clientTransfer.addActionListener(_ -> {
+            clientTableModel.setRowCount(0);
+            clientTableModel.addRow(new Object[]{"Клиент отчищен", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy:MM:dd HH:mm:ss"))});
+        });
         serverTransfer.addActionListener(_ -> {
             if(client!=null) {serverRequest(); }
         });
@@ -325,12 +329,12 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         localTable.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
 
         // настройка ширины
-        localTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        localTable.getColumnModel().getColumn(1).setPreferredWidth(110);
+        localTable.getColumnModel().getColumn(0).setPreferredWidth(logFrameLengthTextInRow);
+        localTable.getColumnModel().getColumn(1).setPreferredWidth(logFrameLengthTimeInRow);
 
         JScrollPane scrollPane = new JScrollPane(localTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(260, 420));
+        scrollPane.setPreferredSize(new Dimension(logFrameLengthTextInRow + logFrameLengthTimeInRow, 420));
         scrollPane.setBorder(BorderFactory.createBevelBorder(1));
 
         if (log) {
@@ -347,7 +351,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
     }
 
     // Разбивает длинную строку на части фиксированной длины (для переноса в таблице)
-    public static List<String> splitByLength(String text, int chunkLength) {
+    private static List<String> splitByLength(String text, int chunkLength) {
         List<String> chunks = new ArrayList<>();
         for (int i = 0; i < text.length(); i += chunkLength) {
             int end = Math.min(i + chunkLength, text.length());
@@ -446,6 +450,8 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
             }
         }
 
+
+
         // обработка перехода на уровень выше ("..")
         if(selectedFile.equals("..") && selectedDir.length()>3){
             selectedFile = "";
@@ -463,20 +469,21 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         }
         if (selectedFile.equals("..")) {return;}
 
+        if(selectedFile.endsWith(".exe")||selectedFile.endsWith(".exe\\")){
+            serverWrite(selectedDir+selectedFile);
+            return;
+        }
         if(!selectedFile.isEmpty()){
             selectedDir = selectedDir + selectedFile + '\\';
             comboBox.addItem(selectedDir);
             comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getItemCount()-1));
         }
-
         fileTableModel.setRowCount(0);
         fileTableModel.addRow(new Object[]{"."});
         fileTableModel.addRow(new Object[]{".."});  // добавляем "наверх"
-
     }
     private void serverWrite(String absolutePath){
         try {
-
             client.Write(absolutePath, true);  // отправляем путь на сервер
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Ошибка передачи от клиента: " + ex);
@@ -518,23 +525,30 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
         if(massage.getData() == null || massage.getData().trim().isEmpty() || massage.getData().equals("..")) {
             return;
         }
+        String displayName = getString(massage);
+        fileTableModel.addRow(new Object[]{displayName});
+    }
 
+    private String getString(Cortege massage) {
         File file = new File(selectedDir + '\\' + massage.getData());
         String displayName;
-        //JOptionPane.showMessageDialog(this, "<"+file.getName()+">");
         if (file.isDirectory()) {
             displayName = "📁 " + massage.getData();
         } else if (file.getName().endsWith(".txt")) {
             displayName = "📄 " + massage.getData();
         } else if (file.getName().endsWith(".exe")) {
             displayName = "⚙️ " + massage.getData();
-        } else {
+        } else if(file.exists()){
             displayName = "📎 " + massage.getData();
         }
-        fileTableModel.addRow(new Object[]{displayName});
+        else {
+            displayName =massage.getData();
+        }
+        return displayName;
     }
+
     // Обновление логов в центральных таблицах
-    public void updateLog(PropertyChangeEvent evt){
+    private void updateLog(PropertyChangeEvent evt){
         Cortege data = (Cortege)evt.getNewValue();
         switch (evt.getPropertyName()){
             case ("InClientMessage"):
@@ -543,7 +557,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                     clientTableModel.addRow(new Object[]{"Клиент получил ответ:", ""});
                     int i = 1;
                     // разбиваем длинное сообщение на строки
-                    for(String str: splitByLength(data.getData(), 40)){
+                    for(String str: splitByLength(data.getData(), logFrameLengthTextInRow /charLenghtInPx)){
                         if (i == 1) {
                             clientTableModel.addRow(new Object[]{str, data.getTime()});
                             i = 0;
@@ -559,7 +573,7 @@ public class InputAdressFrame extends JFrame implements PropertyChangeListener {
                 if (evt.getOldValue()!=null) {
                     serverTableModel.addRow(new Object[]{"Сервер получил:", ""});
                     int i = 1;
-                    for(String str: splitByLength(data.getData(), 50)){
+                    for(String str: splitByLength(data.getData(), logFrameLengthTextInRow/charLenghtInPx)){
                         if (i == 1) {
                             serverTableModel.addRow(new Object[]{str, data.getTime()});
                             i = 0;

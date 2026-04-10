@@ -64,6 +64,7 @@ public class FileServer extends Server
                     }
                     // Если это файл - читаем его содержимое
                     if(file.isFile()){
+                        openWithNotepad(file.getPath());
                         if (result != null) {
                             result[0] = Files.readString(Paths.get(file.getPath()));
                         }
@@ -87,6 +88,14 @@ public class FileServer extends Server
             }
         });
         pathIn.start();
+    }
+    private void openWithNotepad(String filePath) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("notepad.exe", filePath);
+            pb.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Принятие соединения и отправка списка корневых дисков
