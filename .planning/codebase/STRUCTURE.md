@@ -96,7 +96,7 @@ Object
 Object
 └── JFrame
     ├── SelectTaskMenu
-    └── GUI.Task1.InputAdressFrame (implements PropertyChangeListener)
+    └── GUI.Task1.InputAddressFrame (implements PropertyChangeListener)
 ```
 
 **Интерфейсы:**
@@ -109,7 +109,7 @@ DispatcherView
 
 PropertyChangeListener (java.beans)
 ├── Task1.ClientReqest
-└── GUI.Task1.InputAdressFrame
+└── GUI.Task1.InputAddressFrame
 ```
 
 ## Реализации интерфейсов
@@ -189,11 +189,11 @@ PropertyChangeListener (java.beans)
 ## Зависимости между пакетами
 
 ```
-SelectTaskMenu ─────────────┬── GUI.Task1.InputAdressFrame
+SelectTaskMenu ─────────────┬── GUI.Task1.InputAddressFrame
                             ├── GUI.Task2.ConnectionFrame
                             └── GUI.Task3.Launcher
 
-GUI.Task1.InputAdressFrame ─┬── Base.Server
+GUI.Task1.InputAddressFrame ─┬── Base.Server
                             ├── Base.Client
                             ├── Task1.FileServer
                             └── Task1.ClientReqest

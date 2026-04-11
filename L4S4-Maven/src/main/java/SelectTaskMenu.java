@@ -1,5 +1,7 @@
 
 
+import GUI.Task1.InputAddressFrame;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -24,7 +26,7 @@ public class SelectTaskMenu extends JFrame {
 
         button1.addActionListener(e -> {
             frame.dispose();
-            GUI.Task1.InputAdressFrame.Run();
+            InputAddressFrame.Run();
         });
         button2.addActionListener(e -> {
             frame.dispose();
