@@ -314,7 +314,7 @@ public class ConnectionFrame {
         controllerProcess = null;
     }
 
-    public static void Run() {
+    public static void run() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

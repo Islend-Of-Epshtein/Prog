@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a11237ed-430a-47c1-8adb-c4893e0142ec" name="Changes" comment="запуск .exe">
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.planning/codebase/STRUCTURE.md" beforeDir="false" afterPath="$PROJECT_DIR$/.planning/codebase/STRUCTURE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.planning/phases/05-refactoring-conventions/05-01-PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/.planning/phases/05-refactoring-conventions/05-01-PLAN.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.planning/phases/05-refactoring-conventions/05-03-PLAN.md" beforeDir="false" afterPath="$PROJECT_DIR$/.planning/phases/05-refactoring-conventions/05-03-PLAN.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAdressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAddressFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAddressFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task1/InputAddressFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task2/ConnectionFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/GUI/Task2/ConnectionFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/SelectTaskMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/ClientRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Cortege.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/Cortege.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/L4S4-Maven/src/main/java/Task1/FileServer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="L4S4" />
+        <entry key="$PROJECT_DIR$" value="L5S4" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -81,7 +83,7 @@
   <component name="RunManager">
     <configuration name="SelectTask" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SelectTaskMenu" />
-      <module name="Prog" />
+      <module name="L4S4-Maven" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
